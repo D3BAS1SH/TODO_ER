@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "A backend of TODO list",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "JS",
+    "Express",
+    "Node",
+    "backend"
+  ],
+  "author": "DEV",
+  "license": "ISC"
+}
