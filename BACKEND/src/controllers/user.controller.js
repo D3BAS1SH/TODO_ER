@@ -189,4 +189,27 @@ const getCurrentUser = asynHandler(async(req,res)=>{
     return res.status(200).json(new ApiResponse(200,req.user,"Current user fetchd successfully."))
 })
 
+const updateAccountDetails = asynHandler(async(req,res)=>{
+    const {fullname,email} = req.body
+
+    if(!fullname || !email){
+        throw new ApiError(400,"Not enough information provided.")
+    }
+
+    const newuser = await User.findByIdAndUpdate(req.user?._id,
+        {
+            $set:{
+                fullname,
+                email
+            }
+        },
+        {new:true}
+    ).select("-password -refreshToken")
+
+    return res.status(200).json(
+        new ApiResponse(200,newuser,"User Updated successfully.")
+    )
+
+})
+
 export {registerUser,loginUser,logoutUser,haverefreshAccessToken,changeCurrentPassword,getCurrentUser}
