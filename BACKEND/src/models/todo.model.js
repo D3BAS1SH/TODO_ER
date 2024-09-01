@@ -12,6 +12,11 @@ const TodoSchema=new Schema({
     },
     Completed:{
         type:Boolean
+    },
+    User:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
     }
 },{timestamps:true})
 
