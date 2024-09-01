@@ -212,4 +212,45 @@ const updateAccountDetails = asynHandler(async(req,res)=>{
 
 })
 
-export {registerUser,loginUser,logoutUser,haverefreshAccessToken,changeCurrentPassword,getCurrentUser}
+const updateAvatar = asynHandler(async(req,res)=>{
+    const avatarLocalPath = req.file?.path
+
+    if(!avatarLocalPath){
+        throw new ApiError(400,"Avatar file not found.")
+    }
+
+    const avatarRes = await uploadOnCloudinary(avatarLocalPath)
+
+    if(!avatarRes.url){
+        throw new ApiError(400,"Error while uploading the avatar.")
+    }
+
+    const user = await User.findByIdAndUpdate(req.user?._id,
+        {$set:{avatar:avatarRes.url}},{new:true}
+    ).select("-password -refreshToken")
+
+    return res.status(200).json(new ApiResponse(200,{user},"updated avatar successfully"))
+})
+
+const updateCoverImage = asynHandler(async(req,res)=>{
+    const coverImageLocalPath = req.file?.path
+
+    if(!coverImageLocalPath){
+        throw new ApiError(400,"CoverImage file not found.")
+    }
+
+    const BgRes = await uploadOnCloudinary(coverImageLocalPath)
+
+    if(!BgRes.url){
+        throw new ApiError(400,"Error while uploading the CoveImage.")
+    }
+
+    const user = await User.findByIdAndUpdate(req.user?._id,
+        {$set:{coverImage:BgRes.url}},{new:true}
+    ).select("-password -refreshToken")
+
+    return res.status(200).json(new ApiResponse(200,{},"updated avatar successfully"))
+})
+
+
+export {registerUser,loginUser,logoutUser,haverefreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails,updateAvatar,updateCoverImage}
