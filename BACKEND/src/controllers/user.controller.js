@@ -214,12 +214,13 @@ const updateAccountDetails = asynHandler(async(req,res)=>{
 
 const updateAvatar = asynHandler(async(req,res)=>{
     const avatarLocalPath = req.file?.path
+    const PresentAvatarFileURL = req.user?.avatar || null
 
     if(!avatarLocalPath){
         throw new ApiError(400,"Avatar file not found.")
     }
 
-    const avatarRes = await uploadOnCloudinary(avatarLocalPath)
+    const avatarRes = await uploadOnCloudinary(avatarLocalPath,PresentAvatarFileURL)
 
     if(!avatarRes.url){
         throw new ApiError(400,"Error while uploading the avatar.")
@@ -249,8 +250,7 @@ const updateCoverImage = asynHandler(async(req,res)=>{
         {$set:{coverImage:BgRes.url}},{new:true}
     ).select("-password -refreshToken")
 
-    return res.status(200).json(new ApiResponse(200,{},"updated avatar successfully"))
+    return res.status(200).json(new ApiResponse(200,{},"updated coverImage successfully"))
 })
-
 
 export {registerUser,loginUser,logoutUser,haverefreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails,updateAvatar,updateCoverImage}
