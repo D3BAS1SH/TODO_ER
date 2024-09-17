@@ -16,8 +16,9 @@ APP.use(cookieParser())
 
 //Routes Importing
 import userRouter from './routes/User.routes.js'
+import TodoRouter from "./routes/Todo.routes.js"
 
 //Route Declaration
 APP.use('/api/v1/users',userRouter)
-
+APP.use('/api/v1/todos',TodoRouter)
 export {APP}
