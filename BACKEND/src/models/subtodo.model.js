@@ -5,7 +5,7 @@ const SubtodoSchema = new Schema({
         type:String,
         required:true,
     },
-    Completion:{
+    Completed:{
         type:Boolean,
     },
     Color:{
@@ -15,6 +15,15 @@ const SubtodoSchema = new Schema({
         type:mongoose.Schema.ObjectId,
         ref:"Todo",
         required:true
+    },
+    User:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true,
+    },
+    Order:{
+        type:Number,
+        default:0
     }
 },{timestamps:true})
 

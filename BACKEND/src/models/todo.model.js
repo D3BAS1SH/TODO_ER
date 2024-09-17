@@ -11,12 +11,23 @@ const TodoSchema=new Schema({
         type:String,
     },
     Completed:{
-        type:Boolean
+        type:Boolean,
+        default:false
     },
     User:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true
+    },
+    Subtodos:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"SubTodo"
+        }
+    ],
+    Order:{
+        type:Number,
+        default:0
     }
 },{timestamps:true})
 
