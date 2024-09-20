@@ -2,6 +2,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asynHandler } from "../utils/asyncHandler.js";
 import {Todo} from '../models/todo.model.js';
+import { SubTodo } from "../models/subtodo.model.js";
+import mongoose from "mongoose";
 
 const CreateTodo = asynHandler(async(req,res)=>{
     const {Heading,Color} = req.body;
@@ -44,7 +46,7 @@ const UpdateTodo = asynHandler(async(req,res)=>{
     if(!(Heading || Color || Completed)){
         throw new ApiError(400,"Nothing to change");
     }
-    
+
     const UpdateResponse = await Todo.findByIdAndUpdate({_id:id,User:userID},{Heading,Color,Completed},{new:true})
 
     console.log("Updated Successfully");
@@ -100,8 +102,53 @@ const getAllTodo = asynHandler(async(req,res)=>{
     return res.status(200).json(new ApiResponse(200,PaginatedTodos,"Document fetched."))
 })
 
+const getTodoById = asynHandler(async(req,res)=>{
+    const {id} = req.params;
+    const userID = req.user?._id;
+
+    if(!id){
+        throw new ApiError(400,"No Id is provided")
+    }
+
+    // const theTodoFetch = await Todo.findById({_id:id,User:userID}).populate("Subtodos");
+    const theTodoFetch0 = await Todo.findOne({_id:id,User:userID});
+    let theTodoFetch1 = theTodoFetch0.Subtodos.length? await theTodoFetch0.populate("Subtodos") : theTodoFetch0
+
+    if(!theTodoFetch1){
+        throw new ApiError(503,"Document Not available");
+    }
+
+    return res.status(200).json(new ApiResponse(200,theTodoFetch1,"Todo fetched succesfully"))
+
+})
+
+const deleteTodo = asynHandler(async(req,res)=>{
+    const {id} = req.params;
+    const userID = req.user?._id;
+
+    if(!id){
+        throw new ApiError(400,"ID is required.")
+    }
+
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        throw new ApiError(400,"Invalid ID");
+    }
+
+    const theTodoDelete = await Todo.findOneAndDelete({_id:id,User:userID});
+
+    if(!theTodoDelete){
+        throw new ApiError(403,"Deletion Failed.")
+    }
+    await SubTodo.deleteMany({Parent:id})
+
+    return res.status(200).json(new ApiResponse(200,{},"Todo and sub Todo that belongs to this Todo removed."))
+
+})
+
 export {
     CreateTodo,
     UpdateTodo,
-    getAllTodo
+    getAllTodo,
+    getTodoById,
+    deleteTodo
 }
