@@ -15,10 +15,12 @@ APP.use(express.static("public"))
 APP.use(cookieParser())
 
 //Routes Importing
-import userRouter from './routes/User.routes.js'
-import TodoRouter from "./routes/Todo.routes.js"
+import userRouter from './routes/User.routes.js';
+import TodoRouter from "./routes/Todo.routes.js";
+import SubTodoRouter from "./routes/SubTodo.routes.js"
 
 //Route Declaration
 APP.use('/api/v1/users',userRouter)
 APP.use('/api/v1/todos',TodoRouter)
+APP.use('/api/v1/subtodos',SubTodoRouter)
 export {APP}
