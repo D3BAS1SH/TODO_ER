@@ -7,9 +7,11 @@ const SubtodoSchema = new Schema({
     },
     Completed:{
         type:Boolean,
+        default:false
     },
     Color:{
         type:String,
+        default:"#000000"
     },
     Parent:{
         type:mongoose.Schema.ObjectId,
