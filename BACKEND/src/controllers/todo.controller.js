@@ -77,7 +77,7 @@ const getAllTodo = asynHandler(async(req,res)=>{
         },
         {
             $lookup:{
-                from:'Subtodos',
+                from:'subtodos',
                 localField:"_id",
                 foreignField:"Parent",
                 as:"Subtodos"
@@ -94,6 +94,9 @@ const getAllTodo = asynHandler(async(req,res)=>{
             $sort:{subTodoCount:-1}
         }
     ],options);
+
+    console.log(PaginatedTodos);
+    
     
     if(!PaginatedTodos){
         throw new ApiError(400,"Document Can't be fetched.")
