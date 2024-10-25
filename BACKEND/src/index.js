@@ -13,9 +13,10 @@ connectDB()
         console.log("Server Error : ",err);
     })
 
-    APP.listen(process.env.PORT||8000,()=>{
-        console.log(`Server is running at port : ${process.env.PORT}`);
+    const mySever = APP.listen(process.env.PORT||8000,()=>{
+        console.log(`Server is running at port : ${mySever.address().port}`);
     })
+    
 })
 .catch((err)=>{
     console.log(`MongoDB Connection error.`,err);
