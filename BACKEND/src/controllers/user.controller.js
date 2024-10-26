@@ -110,10 +110,14 @@ const loginUser = asynHandler(async(req,res)=>{
 
     const options = {
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite:'strict'
     }
 
-    return res.status(200).cookie("accessToken",AccessToken,options).cookie("refreshToken",RefreshToken,options).json(new ApiResponse(200,{user : loggedInUser,AccessToken,RefreshToken}))
+    return res.status(200)
+    .cookie("accessToken",AccessToken,{...options,maxAge:parseInt(process.env.ACCESS_TOKEN_EXPIRY)})
+    .cookie("refreshToken",RefreshToken,{...options,maxAge:parseInt(process.env.REFRESH_TOKEN_EXPIRY)})
+    .json(new ApiResponse(200,{user : loggedInUser,AccessToken,RefreshToken}))
 
 })
 
@@ -125,10 +129,14 @@ const logoutUser = asynHandler(async(req,res)=>{
 
     const options = {
         httpOnly:true,
-        secure:true
+        secure:true,
+        sameSite:'strict'
     }
 
-    return res.status(200).clearCookie("accessToken",options).clearCookie("refreshToken",options).json(new ApiResponse(200,{},"User Logged out"))
+    return res.status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json(new ApiResponse(200,{},"User Logged out"))
 })
 
 const haverefreshAccessToken = asynHandler( async(req,res)=>{
@@ -154,14 +162,18 @@ const haverefreshAccessToken = asynHandler( async(req,res)=>{
             throw new ApiError(401,"Refresh token is expired")
         }
     
-        const options={
+        const options = {
             httpOnly:true,
-            secure:true
+            secure:true,
+            sameSite:'strict'
         }
     
         const {AccessToken,RefreshToken} = await generateAccessNRefreshToken(user._id)
     
-        return res.status(200).cookie("accessToken",AccessToken,options).cookie("refreshToken",RefreshToken,options).json(new ApiResponse(200,{AccessToken,RefreshToken},"Successfully refreshed tokens."))
+        return res.status(200)
+        .cookie("accessToken",AccessToken,{...options,maxAge:parseInt(process.env.ACCESS_TOKEN_EXPIRY)})
+        .cookie("refreshToken",RefreshToken,{...options,maxAge:parseInt(process.env.REFRESH_TOKEN_EXPIRY)})
+        .json(new ApiResponse(200,{AccessToken,RefreshToken},"Successfully refreshed tokens."))
     } catch (error) {
         throw new ApiError(401,error?.message || "Invalid RefreshToken")
     }
