@@ -6,6 +6,8 @@ class UserAuthService{
             baseURL:"http://localhost:8088/api/v1/users/",
             withCredentials:true
         })
+
+        this.setupInterceptors()
     }
 
     setupInterceptors(){
@@ -19,22 +21,47 @@ class UserAuthService{
                     originalRequest._retry=true
 
                     try {
-                        const TokenResponse = await this.getRefreshTokens()
+                        await this.getRefreshTokens()
                         return this.httpClient(originalRequest)
                     } catch (error) {
                         await this.logout()
                         throw error
                     }
                 }
+
+                return Promise.reject(error)
             }
         );
     }
 
     async register(userData){
         try {
-            const response = await this.httpClient.post('/register',userData);
+
+            const {username,fullname,email,password,avatar=null,coverImage=null} = userData
+            const formData = new FormData()
+
+            formData.append('username',username)
+            formData.append('fullname',fullname)
+            formData.append('email',email)
+            formData.append('password',password)
+            
+            if(avatar){
+                formData.append('avatar',avatar)
+            }
+
+            if(coverImage){
+                formData.append('coverImage',coverImage)
+            }
+
+            const config={
+                header:{
+                    'Content-type':'multipart/form-data'
+                }
+            }
+
+            const response = await this.httpClient.post('/register',formData,config);
             //But i'm using the files and form data
-            return userData
+            return response
         } catch (error) {
             throw this.handleError(error)            
         }
