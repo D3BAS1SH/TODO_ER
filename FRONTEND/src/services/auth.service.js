@@ -1,23 +1,46 @@
 import axios from "axios";
+import { authStore } from "../stores";
+import {clearAuth,setError,setLoading,setUser} from "../stores/auth.slice.js";
 
 class UserAuthService{
     constructor(){
         this.httpClient=axios.create({
             baseURL:"http://localhost:8088/api/v1/users/",
-            withCredentials:true
+            withCredentials:true,
+            headers:{
+                "Content-Type":"application/json"
+            }
         })
 
         this.setupInterceptors()
     }
 
     setupInterceptors(){
+
+        //Request Interceptor
+        this.httpClient.interceptors.request.use(
+            (config)=>{
+                authStore.dispatch(setLoading(true));
+                return config;
+            },
+            (error)=>{
+                authStore.dispatch(setLoading(false));
+                return Promise.reject(error);
+            }
+        )
+
+        //Response Interceptor
         this.httpClient.interceptors.response.use(
             (response)=>{
+                authStore.dispatch(setLoading(false))
                 return response
             },
             async(error)=>{
+                
                 const originalRequest=error.config;
+                
                 if(error.response?.status===401 && !originalRequest._retry){
+                    
                     originalRequest._retry=true
 
                     try {
@@ -28,7 +51,7 @@ class UserAuthService{
                         throw error
                     }
                 }
-
+                authStore.dispatch(setLoading(false))
                 return Promise.reject(error)
             }
         );
@@ -54,34 +77,43 @@ class UserAuthService{
             }
 
             const config={
-                header:{
+                headers:{
                     'Content-type':'multipart/form-data'
                 }
             }
 
             const response = await this.httpClient.post('/register',formData,config);
-            //But i'm using the files and form data
+            authStore.dispatch(setUser(response.data.user))
             return response
         } catch (error) {
-            throw this.handleError(error)            
+            const HandledError = this.handleError(error)
+            authStore.dispatch(setError(HandledError.message))
+            throw HandledError
         }
     }
 
     async login(credentials){
         try {
+            
             const response = await this.httpClient.post('/login',credentials)
+            authStore.dispatch(setUser(response.data.user))
             return response
         } catch (error) {
-            throw this.handleError(error)
+            const HandledError = this.handleError(error)
+            authStore.dispatch(setError(HandledError.message))
+            throw HandledError
         }
     }
 
     async logout(){
         try {
+            
             await this.httpClient.post('/logout');
             this.clearState()
         } catch (error) {
-            throw this.handleError(error)
+            const HandledError = this.handleError(error)
+            authStore.dispatch(setError(HandledError.message))
+            throw HandledError
         }
     }
 
@@ -96,10 +128,14 @@ class UserAuthService{
 
     async getCurrentUser(){
         try {
+            
             const response = await this.httpClient.get('/get-current-user');
+            authStore.dispatch(setUser(response.data.user))
             return response
         } catch (error) {
-            throw this.handleError(error)
+            const HandledError = this.handleError(error)
+            authStore.dispatch(setError(HandledError.message))
+            throw HandledError
         }
     }
 
@@ -116,7 +152,7 @@ class UserAuthService{
         return new Error('Request failed');
     }
     clearState(){
-        //Redux Clear
+        authStore.dispatch(clearAuth())
         window.location.href='/login'
     }
 }
