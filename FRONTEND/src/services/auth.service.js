@@ -1,5 +1,5 @@
 import axios from "axios";
-import { authStore } from "../stores";
+import { Store } from "../stores";
 import {clearAuth,setError,setLoading,setUser} from "../stores/auth.slice.js";
 
 class UserAuthService{
@@ -20,11 +20,11 @@ class UserAuthService{
         //Request Interceptor
         this.httpClient.interceptors.request.use(
             (config)=>{
-                authStore.dispatch(setLoading(true));
+                Store.dispatch(setLoading(true));
                 return config;
             },
             (error)=>{
-                authStore.dispatch(setLoading(false));
+                Store.dispatch(setLoading(false));
                 return Promise.reject(error);
             }
         )
@@ -32,7 +32,7 @@ class UserAuthService{
         //Response Interceptor
         this.httpClient.interceptors.response.use(
             (response)=>{
-                authStore.dispatch(setLoading(false))
+                Store.dispatch(setLoading(false))
                 return response
             },
             async(error)=>{
@@ -51,7 +51,7 @@ class UserAuthService{
                         throw error
                     }
                 }
-                authStore.dispatch(setLoading(false))
+                Store.dispatch(setLoading(false))
                 return Promise.reject(error)
             }
         );
@@ -83,11 +83,11 @@ class UserAuthService{
             }
 
             const response = await this.httpClient.post('/register',formData,config);
-            authStore.dispatch(setUser(response.data.user))
+            Store.dispatch(setUser(response.data.user))
             return response
         } catch (error) {
             const HandledError = this.handleError(error)
-            authStore.dispatch(setError(HandledError.message))
+            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
@@ -96,11 +96,11 @@ class UserAuthService{
         try {
             
             const response = await this.httpClient.post('/login',credentials)
-            authStore.dispatch(setUser(response.data.user))
+            Store.dispatch(setUser(response.data.user))
             return response
         } catch (error) {
             const HandledError = this.handleError(error)
-            authStore.dispatch(setError(HandledError.message))
+            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
@@ -112,7 +112,7 @@ class UserAuthService{
             this.clearState()
         } catch (error) {
             const HandledError = this.handleError(error)
-            authStore.dispatch(setError(HandledError.message))
+            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
@@ -130,11 +130,11 @@ class UserAuthService{
         try {
             
             const response = await this.httpClient.get('/get-current-user');
-            authStore.dispatch(setUser(response.data.user))
+            Store.dispatch(setUser(response.data.user))
             return response
         } catch (error) {
             const HandledError = this.handleError(error)
-            authStore.dispatch(setError(HandledError.message))
+            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
@@ -152,7 +152,7 @@ class UserAuthService{
         return new Error('Request failed');
     }
     clearState(){
-        authStore.dispatch(clearAuth())
+        Store.dispatch(clearAuth())
         window.location.href='/login'
     }
 }
