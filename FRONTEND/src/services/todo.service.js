@@ -3,7 +3,6 @@ import { Store } from "../stores";
 import UserAuthService from "./auth.service.js";
 import {
     deleteTodo,
-    selecteTodo,
     setAddTodo,
     setError,
     setLoading,
