@@ -103,10 +103,10 @@ class TodoService{
         }
     }
     
-    async updateTodo(todoId){
+    async updateTodo(todoId,todoChange){
         
         try {
-            const response = await this.httpClient.patch(`/update-todo/${todoId}`)
+            const response = await this.httpClient.patch(`/update-todo/${todoId}`,todoChange)
             Store.dispatch(updateTodo(response.data));
             return response.data;
         } catch (error) {
