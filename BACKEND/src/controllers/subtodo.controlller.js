@@ -120,6 +120,7 @@ const BatchAddSubtodos = asynHandler(async(req,res)=>{
     }
 })
 
+//Depricated request of Adding subtodo.
 const AddSubTodo = asynHandler(async(req,res)=>{
 
     const {todoId} = req.params;
@@ -211,9 +212,103 @@ const DeleteSubtodo = asynHandler(async(req,res)=>{
     return res.status(200).json(new ApiResponse(200,{},"Subtodo Deleted succesfully."))
 })
 
+const CleanUpOrphanSubTodos=asynHandler(async(req,res)=>{
+    const userID = req.user?._id;
+    const session = await mongoose.startSession();
+    try {
+        await session.startTransaction();
+        const orphanSubTodos = await SubTodo.find({User:userID}).session(session);
+
+        const todoIds = [...new set(orphanSubTodos.map(s=>s.Parent))];
+        const existingTodos=await Todo.find({
+            _id:{$in:todoIds},
+            User:userID
+        }).session(session);
+
+        const existingTodoIds = new Set(existingTodos.map(t=>t._id.toString()));
+        const orphanedsubtodoIds = orphanSubTodos.filter(s=> !existingTodoIds.has(s.Parent.toString())).map(s=>s._id)
+
+        if(orphanedsubtodoIds.length > 0){
+            await SubTodo.deleteMany({
+                _id:{$in:orphanedsubtodoIds}
+            }).session(session);
+        }
+
+        await session.commitTransaction();
+    } catch (error) {
+        await session.abortTransaction();
+        throw error
+    }finally{
+        session.endSession();
+    }
+})
+
+const BatchUpdateSubtodos = asynHandler(async(req,res)=>{
+    const userID = req.user?._id;
+    const {IncomingUpdatedSubtodos} = req.body;
+    const {todoId} = req.params;
+    
+    if(!userID || !mongoose.Types.ObjectId.isValid(userID)){
+        throw new ApiError(400,"No Valid User Id found");
+    }
+    
+    if(!Array.isArray(IncomingUpdatedSubtodos)){
+        throw new ApiError(400,"Incoming subtodos objects must be in an Array")
+    }
+    
+    const session= await mongoose.startSession();
+    try {
+        await session.startTransaction();
+        const subtodoIds = IncomingUpdatedSubtodos.map(Up=>Up._id);
+        
+        const existingSubtodos = await SubTodo.find({
+            _id:{$in:subtodoIds},
+            Parent:todoId,
+            User:userID
+        }).session(session)
+        
+        if(existingSubtodos.length !== subtodoIds.length){
+            throw new ApiError(400,"One or more invalid subtodo Ids provided.")
+        }
+        
+        const bulkUpdate = IncomingUpdatedSubtodos.map(Up=>({
+            updateOne:{
+                filter:{_id:Up._id},
+                update:{
+                    $set:{
+                        Content:Up._id,
+                        Completed: Up.Completed,
+                        Color:Up.Color
+                    }
+                }
+            }
+        }));
+        
+        await SubTodo.bulkWrite(bulkUpdate,{session});
+        console.log("Till here");
+
+        const updatedSubtodos = await SubTodo.find({
+            _id:{$in:subtodoIds}
+        }).sort("Order");
+
+        await session.commitTransaction();
+
+        return res.status(200).json(
+            new ApiResponse(200,updatedSubtodos,"Subtodos Updated Succefully.")
+        )
+    } catch (error) {
+        await session.abortTransaction();
+        throw new ApiError(error)
+    }finally{
+        await session.endSession();
+    }
+})
+
 export {
     BatchAddSubtodos,
     AddSubTodo,
     UpdateSubTodo,
-    DeleteSubtodo
+    DeleteSubtodo,
+    CleanUpOrphanSubTodos,
+    BatchUpdateSubtodos
 }
