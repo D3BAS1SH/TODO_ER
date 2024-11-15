@@ -1,13 +1,63 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState={
-    todos:[],
+    availableTodos:[],
+    newTodos:[],
+    updateTodos:[],
     loading:false,
     error:null,
     selectedTodo:null
 }
 
-const todoSlice = createSlice({
+const todoSlice=createSlice({
+    name:"Todos",
+    initialState,
+    reducers:{
+        setLoading:(state,action)=>{
+            state.loading=action.payload;
+        },
+        setError:(state,action)=>{
+            state.error=action.payload;
+        },
+        setAvailableTodos:(state,action)=>{
+            state.availableTodos=action.payload;
+        },
+        setNewTodos:(state,action)=>{
+            state.newTodos.push(action.payload)
+        },
+        confirmNewTodo:(state,action)=>{
+            const confirmedTodos= action.payload;
+            state.availableTodos=[...state.availableTodos,...confirmedTodos];
+            state.newTodos=[];
+        },
+        setUpdateTodos:(state,action)=>{
+            state.updateTodos.push(action.payload);
+        },
+        confirmUpdateTodos:(state,action)=>{
+            const updatedTodos=action.payload;
+            state.availableTodos = state.availableTodos.map(todo=>{
+                const updatedTodo = updatedTodos.find(ut=>ut._id===todo._id);
+                return updatedTodo||todo;
+            });
+            state.updateTodos=[];
+        },
+
+    }
+})
+
+export const {
+    confirmNewTodo,
+    confirmUpdateTodos,
+    setAvailableTodos,
+    setError,
+    setLoading,
+    setNewTodos,
+    setUpdateTodos
+} = todoSlice.actions;
+
+export const todoReducer = todoSlice.reducer;
+
+/*const todoSlice = createSlice({
     name:"Todos",
     initialState,
     reducers:{
@@ -49,4 +99,4 @@ export const {
     updateTodo
 } = todoSlice.actions
 
-export default todoSlice.reducer; 
+export default todoSlice.reducer;*/
