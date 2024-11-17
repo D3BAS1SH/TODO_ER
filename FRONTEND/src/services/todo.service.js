@@ -62,72 +62,82 @@ class TodoService{
         );
     }
 
-    async getAllTodos(page=1,limit=5){
-        try {
-            const response = await this.httpClient.get(`/get-all-todo/`,{params:{
-                page,
-                limit
-            }});
-            Store.dispatch(setTodo(response.data));
-            return response.data;
-        } catch (error) {
-            const handledError=this.handleError(error);
-            Store.dispatch(setError(handledError.message));
-            throw handledError
-        }
-    }
+    // async getAllTodos(page=1,limit=5){
+    //     try {
+    //         const response = await this.httpClient.get(`/get-all-todo/`,{params:{
+    //             page,
+    //             limit
+    //         }});
+    //         Store.dispatch(setTodo(response.data));
+    //         return response.data;
+    //     } catch (error) {
+    //         const handledError=this.handleError(error);
+    //         Store.dispatch(setError(handledError.message));
+    //         throw handledError
+    //     }
+    // }
 
-    async getTodoById(todoId){
+    // async getTodoById(todoId){
 
-        try {
-            const response = await this.httpClient.get(`/get-a-todo/${todoId}`)
-            Store.dispatch(setSelectedTodo(response.data))
-            return response.data
-        } catch (error) {
-            const handledError = this.handleError(error);
-            Store.dispatch(setError(handledError.message));
-            return handledError
-        }
-    }
+    //     try {
+    //         const response = await this.httpClient.get(`/get-a-todo/${todoId}`)
+    //         Store.dispatch(setSelectedTodo(response.data))
+    //         return response.data
+    //     } catch (error) {
+    //         const handledError = this.handleError(error);
+    //         Store.dispatch(setError(handledError.message));
+    //         return handledError
+    //     }
+    // }
     
     async createTodo(data){
-        
         try {
-            const response = await this.httpClient.post('/create-todo',data)
-            Store.dispatch(setAddTodo(response.data));
-            return response.data
-        } catch (error) {
-            const handledError = this.handleError(error)
-            Store.dispatch(setError(handledError.message))
-            throw handledError
-        }
-    }
-    
-    async updateTodo(todoId,todoChange){
-        
-        try {
-            const response = await this.httpClient.patch(`/update-todo/${todoId}`,todoChange)
-            Store.dispatch(updateTodo(response.data));
+            const response = await this.httpClient.post('/create-todo/',data);
             return response.data;
         } catch (error) {
-            const handledError=this.handleError(error);
-            Store.dispatch(setError(handledError.message))
-            return handledError;
-        }
+            throw this.handleError(error);
+        } 
     }
-    
-    async deleteaTodo(todoId){
+
+    // async createTodo(data){
         
-        try {
-            const response = await this.httpClient.delete(`/delete-a-todo/${todoId}`);
-            Store.dispatch(deleteTodo(response.data));
-            return response.data
-        } catch (error) {
-            const handledError=this.handleError(error);
-            Store.dispatch(setError(handledError.message));
-            return handledError;
-        }
-    }
+    //     try {
+    //         Store.dispatch(setLoading(true))
+    //         const response = await this.httpClient.post('/create-todo',data)
+    //         Store.dispatch(setAddTodo(response.data));
+    //         return response.data
+    //     } catch (error) {
+    //         const handledError = this.handleError(error)
+    //         Store.dispatch(setError(handledError.message))
+    //         throw handledError
+    //     }
+    // }
+    
+    // async updateTodo(todoId,todoChange){
+        
+    //     try {
+    //         const response = await this.httpClient.patch(`/update-todo/${todoId}`,todoChange)
+    //         Store.dispatch(updateTodo(response.data));
+    //         return response.data;
+    //     } catch (error) {
+    //         const handledError=this.handleError(error);
+    //         Store.dispatch(setError(handledError.message))
+    //         return handledError;
+    //     }
+    // }
+    
+    // async deleteaTodo(todoId){
+        
+    //     try {
+    //         const response = await this.httpClient.delete(`/delete-a-todo/${todoId}`);
+    //         Store.dispatch(deleteTodo(response.data));
+    //         return response.data
+    //     } catch (error) {
+    //         const handledError=this.handleError(error);
+    //         Store.dispatch(setError(handledError.message));
+    //         return handledError;
+    //     }
+    // }
 
     handleError(error){
         if(error.response){
@@ -139,3 +149,5 @@ class TodoService{
         return new Error('Request failed');
     }
 }
+
+export const todoServiceO = new TodoService();
