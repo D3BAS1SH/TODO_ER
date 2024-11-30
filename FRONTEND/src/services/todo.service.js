@@ -2,13 +2,13 @@ import axios from "axios";
 import { Store } from "../stores";
 import UserAuthService from "./auth.service.js";
 import {
-    deleteTodo,
+    /*deleteTodo,
     setAddTodo,
-    setError,
+    setError,*/
     setLoading,
-    setSelectedTodo,
+    /*setSelectedTodo,
     setTodo,
-    updateTodo
+    updateTodo*/
 } from '../stores/todo.slice.js';
 
 class TodoService{
