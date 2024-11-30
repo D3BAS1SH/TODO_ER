@@ -148,12 +148,15 @@ class UserAuthService{
             // Request made but no response
             return new Error('No response from server');
         }
+        if (error.message === 'Network Error') {
+            return new Error('Network error. Please check your internet connection.');
+        }
         // Something else went wrong
         return new Error('Request failed');
     }
     clearState(){
         Store.dispatch(clearAuth())
-        window.location.href='/login'
+        window.location.href='/'
     }
 }
 
