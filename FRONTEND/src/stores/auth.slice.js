@@ -1,4 +1,5 @@
-import {createSlice} from '@reduxjs/toolkit'
+import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
+import UserAuthService from "../services/auth.service.js";
 
 const initialState={
     user:null,
@@ -7,28 +8,149 @@ const initialState={
     error:null
 }
 
+//Async Thunks
+export const RegisterUser = createAsyncThunk(
+    "auth/register",
+    async(userdata,{rejectWithValue})=>{
+        try {
+            const response = await UserAuthService.register(userdata);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
+export const LoginUser = createAsyncThunk(
+    "auth/login",
+    async(credentials,{rejectWithValue})=>{
+        try {
+            const response = await UserAuthService.login(credentials);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
+export const LoginOut = createAsyncThunk(
+    "auth/login",
+    async(_,{rejectWithValue})=>{
+        try {
+            const response = await UserAuthService.logout();
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
+export const RefreshToken = createAsyncThunk(
+    "auth/login",
+    async(_,{rejectWithValue})=>{
+        try {
+            const response = await UserAuthService.getRefreshTokens()
+            return response;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
+export const GetCurrentUser = createAsyncThunk(
+    "auth/login",
+    async(_,{rejectWithValue})=>{
+        try {
+            const response = await UserAuthService.getCurrentUser();
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+)
+
 const authSlice = createSlice({
     name:"Auth",
     initialState,
     reducers:{
-        setLoading:(state,action)=>{
-            state.loading=action.payload
-        },
-        setError:(state,action)=>{
-            state.error=action.payload
-            state.loading=false
-        },
-        setUser:(state,action)=>{
-            state.user=action.payload;
-            state.loading=false;
-            state.isAuthenticated= !!action.payload;
-        },
         clearAuth:(state)=>{
             state.user=null,
             state.isAuthenticated=false
             state.loading=false,
             state.error=null
         }
+    },
+    extraReducers:(builder)=>{
+        builder
+        .addCase(RegisterUser.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(RegisterUser.fulfilled,(state,action)=>{
+            state.user=action.payload;
+            state.error=null;
+            state.isAuthenticated=false;
+            state.loading=false;
+        }).addCase(RegisterUser.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false
+        })
+        .addCase(LoginUser.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(LoginUser.fulfilled,(state,action)=>{
+            state.error=null;
+            state.user=action.payload;
+            state.isAuthenticated=true;
+            state.loading=false;
+        })
+        .addCase(LoginUser.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(LoginOut.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(LoginOut.fulfilled,(state,action)=>{
+            state.error=null;
+            state.isAuthenticated=false;
+            state.loading=false;
+            state.user=null;
+        })
+        .addCase(LoginOut.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(RefreshToken.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(RefreshToken.fulfilled,(state,action)=>{
+            state.error=null;
+            state.isAuthenticated=true;
+            state.loading=false;
+            state.user=action.payload;
+        })
+        .addCase(RefreshToken.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(GetCurrentUser.pending,(state)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(GetCurrentUser.fulfilled,(state,action)=>{
+            state.error=null;
+            state.isAuthenticated=true;
+            state.loading=false;
+            state.user=action.payload;
+        })
+        .addCase(GetCurrentUser.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
     }
 })
 
