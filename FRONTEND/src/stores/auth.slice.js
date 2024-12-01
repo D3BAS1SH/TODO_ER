@@ -34,7 +34,7 @@ export const LoginUser = createAsyncThunk(
 )
 
 export const LoginOut = createAsyncThunk(
-    "auth/login",
+    "auth/logout",
     async(_,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.logout();
@@ -46,7 +46,7 @@ export const LoginOut = createAsyncThunk(
 )
 
 export const RefreshToken = createAsyncThunk(
-    "auth/login",
+    "auth/refreshtoken",
     async(_,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.getRefreshTokens()
@@ -58,7 +58,7 @@ export const RefreshToken = createAsyncThunk(
 )
 
 export const GetCurrentUser = createAsyncThunk(
-    "auth/login",
+    "auth/getcurrentuser",
     async(_,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.getCurrentUser();
