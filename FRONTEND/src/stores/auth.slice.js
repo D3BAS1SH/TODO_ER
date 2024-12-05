@@ -1,5 +1,6 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import UserAuthService from "../services/auth.service.js";
+import {toast} from "react-hot-toast";
 
 const initialState={
     user:null,
@@ -14,8 +15,10 @@ export const RegisterUser = createAsyncThunk(
     async(userdata,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.register(userdata);
+            toast.success("Registration Succesful");
             return response.data;
         } catch (error) {
+            toast.error(error.message||"Registration failed");
             return rejectWithValue(error.message);
         }
     }
@@ -26,8 +29,10 @@ export const LoginUser = createAsyncThunk(
     async(credentials,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.login(credentials);
+            toast.success("Login Successful");
             return response.data;
         } catch (error) {
+            toast.error("Login Failed");
             return rejectWithValue(error.message);
         }
     }
@@ -38,8 +43,10 @@ export const LoginOut = createAsyncThunk(
     async(_,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.logout();
+            toast.success("Logout Succesful");
             return response;
         } catch (error) {
+            toast.error("Logout Failed");
             return rejectWithValue(error.message);
         }
     }
@@ -50,8 +57,10 @@ export const RefreshToken = createAsyncThunk(
     async(_,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.getRefreshTokens()
+            toast.success("Token Generation Succesful");
             return response;
         } catch (error) {
+            toast.error("Token Generation Failed");
             return rejectWithValue(error.message);
         }
     }
@@ -62,8 +71,10 @@ export const GetCurrentUser = createAsyncThunk(
     async(_,{rejectWithValue})=>{
         try {
             const response = await UserAuthService.getCurrentUser();
+            toast.success("User Information Gathering Succesful");
             return response.data;
         } catch (error) {
+            toast.error("User Information Gathering Failed");
             return rejectWithValue(error.message);
         }
     }
@@ -154,5 +165,5 @@ const authSlice = createSlice({
     }
 })
 
-export const {clearAuth,setError,setLoading,setUser} = authSlice.actions;
+export const {clearAuth} = authSlice.actions;
 export default authSlice.reducer;
