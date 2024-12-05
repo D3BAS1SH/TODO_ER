@@ -1,6 +1,4 @@
 import axios from "axios";
-import { Store } from "../stores";
-import {clearAuth,setError,setLoading,setUser} from "../stores/auth.slice.js";
 
 class UserAuthService{
     constructor(){
@@ -20,11 +18,9 @@ class UserAuthService{
         //Request Interceptor
         this.httpClient.interceptors.request.use(
             (config)=>{
-                Store.dispatch(setLoading(true));
                 return config;
             },
             (error)=>{
-                Store.dispatch(setLoading(false));
                 return Promise.reject(error);
             }
         )
@@ -32,7 +28,6 @@ class UserAuthService{
         //Response Interceptor
         this.httpClient.interceptors.response.use(
             (response)=>{
-                Store.dispatch(setLoading(false))
                 return response
             },
             async(error)=>{
@@ -51,7 +46,6 @@ class UserAuthService{
                         throw error
                     }
                 }
-                Store.dispatch(setLoading(false))
                 return Promise.reject(error)
             }
         );
@@ -60,8 +54,8 @@ class UserAuthService{
     async register(userData){
         try {
 
-            const {username,fullname,email,password,avatar=null,coverImage=null} = userData
-            const formData = new FormData()
+            const {username,fullname,email,password,avatar=null,coverImage=null} = userData;
+            const formData = new FormData();
 
             formData.append('username',username)
             formData.append('fullname',fullname)
@@ -83,36 +77,30 @@ class UserAuthService{
             }
 
             const response = await this.httpClient.post('/register',formData,config);
-            Store.dispatch(setUser(response.data.user))
-            return response
+            return response;
         } catch (error) {
-            const HandledError = this.handleError(error)
-            Store.dispatch(setError(HandledError.message))
-            throw HandledError
+            const HandledError = this.handleError(error);
+            throw HandledError;
         }
     }
 
     async login(credentials){
         try {
             
-            const response = await this.httpClient.post('/login',credentials)
-            Store.dispatch(setUser(response.data.user))
+            const response = await this.httpClient.post('/login',credentials);
             return response
         } catch (error) {
             const HandledError = this.handleError(error)
-            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
 
     async logout(){
-        try {
-            
+        try {            
             await this.httpClient.post('/logout');
             this.clearState()
         } catch (error) {
             const HandledError = this.handleError(error)
-            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
@@ -127,14 +115,11 @@ class UserAuthService{
     }
 
     async getCurrentUser(){
-        try {
-            
+        try {            
             const response = await this.httpClient.get('/get-current-user');
-            Store.dispatch(setUser(response.data.user))
-            return response
+            return response;
         } catch (error) {
             const HandledError = this.handleError(error)
-            Store.dispatch(setError(HandledError.message))
             throw HandledError
         }
     }
@@ -155,7 +140,6 @@ class UserAuthService{
         return new Error('Request failed');
     }
     clearState(){
-        Store.dispatch(clearAuth())
         window.location.href='/'
     }
 }
