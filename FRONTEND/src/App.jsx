@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAuth } from "./hooks/useAuth.hook";
 import Navigation from "./components/navbar";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const {isAuthenticated} = useAuth();
+  
   if (!isAuthenticated) return <Navigate to="/" />;
   return children;
 };
