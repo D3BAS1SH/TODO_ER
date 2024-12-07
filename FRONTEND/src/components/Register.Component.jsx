@@ -45,7 +45,7 @@ const RegisterComponent = () => {
         avatar:null,
         coverImage:null,
       })
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       console.error("Some Error in Register");
       toast.error(error.message||"Registration Error Occured")
@@ -78,7 +78,7 @@ const RegisterComponent = () => {
           <Input type="file" label="Cover Image" className="text-center" name="coverImage" onChange={handleChanges}/>
         </div>
         <div>
-          <Button variant="ghost" color="primary" fullWidth={true} radius="sm" onClick={handleOnSubmit}>GET STARTED</Button>
+          <Button variant="ghost" color="primary" fullWidth={true} radius="sm" onClick={handleOnSubmit} isLoading={loading}>GET STARTED</Button>
         </div>
       </CardBody>
     </Card>
