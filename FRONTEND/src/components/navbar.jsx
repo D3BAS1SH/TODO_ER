@@ -1,10 +1,24 @@
 import { Navbar, NavbarBrand, NavbarContent, Button } from "@nextui-org/react";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {useAuth} from "../hooks/useAuth.hook.js";
 
 const Navigation = () => {
   const location = useLocation();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const {
+    isAuthenticated,
+    loading,
+    logout
+  } = useAuth();
+
+  const handleOnClick = async (e) =>{
+    e.preventDefault();
+    try {
+      await logout();
+      
+    } catch (error) {
+      throw error
+    }
+  }
 
   return (
     <Navbar className="shadow-sm">
@@ -24,10 +38,9 @@ const Navigation = () => {
         ) : (
           <Button
             color="danger"
-            variant="flat"
-            onClick={() => {
-              // Logout logic will go here
-            }}
+            variant="shadow"
+            onClick={handleOnClick}
+            isLoading={loading}
           >
             Logout
           </Button>
