@@ -2,6 +2,7 @@ import express from "express"
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import corsConfig from "./utils/cors.config.js"
+import { errorHandler } from "./middlewares/errorhandler.middleware.js"
 
 const APP=express()
 
@@ -21,4 +22,5 @@ import SubTodoRouter from "./routes/SubTodo.routes.js"
 APP.use('/api/v1/users',userRouter)
 APP.use('/api/v1/todos',TodoRouter)
 APP.use('/api/v1/subtodos',SubTodoRouter)
+APP.use(errorHandler);
 export {APP}
