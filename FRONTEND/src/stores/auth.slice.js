@@ -32,7 +32,6 @@ export const LoginUser = createAsyncThunk(
             toast.success("Login Successful");
             return response.data;
         } catch (error) {
-            toast.error("Login Failed");
             return rejectWithValue(error.message);
         }
     }
@@ -117,6 +116,7 @@ const authSlice = createSlice({
             state.loading=false;
         })
         .addCase(LoginUser.rejected,(state,action)=>{
+            console.log("Rejected stuff error in login")
             state.error=action.payload;
             state.loading=false;
         })

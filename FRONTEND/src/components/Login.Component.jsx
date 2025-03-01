@@ -8,7 +8,7 @@ import {toast} from "react-hot-toast";
 const LoginComponent = () => {
 
   const navigate = useNavigate();
-  const {loading,login,isAuthenticated,user,error} = useAuth();
+  const {loading,login} = useAuth();
 
   const [creds,setCreds] = useState({
     input:'',
@@ -51,11 +51,6 @@ const LoginComponent = () => {
         input:"",
         password:""
       });
-
-      console.log(isAuthenticated);
-      console.log(user);
-      console.log(error);
-      
 
       navigate('/dashboard');
     } catch (error) {

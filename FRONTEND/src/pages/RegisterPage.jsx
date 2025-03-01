@@ -25,7 +25,7 @@ const RegisterPage = () => {
   const RandomNumber = Math.floor(Math.random()*Quotes.length);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-10 rounded-md p-8 gap-6 h-full">
+    <div className="min-h-full grid grid-cols-1 md:grid-cols-10 rounded-md p-8 gap-6">
       <section className="h-full md:col-span-6 hidden md:block">
         <Insight author={Quotes[RandomNumber].author} quote={Quotes[RandomNumber].quote} />
       </section>

@@ -14,6 +14,7 @@ const ProtectedRoute = ({ children }) => {
 import HomePage from "./pages/Homepage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -29,6 +30,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile/>
                 </ProtectedRoute>
               }
             />

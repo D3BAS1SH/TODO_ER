@@ -6,3 +6,6 @@ export const Store = configureStore({
         auth:authReducer,
     },
 })
+Store.subscribe(() => {
+    console.log("Redux State Updated →", Store.getState());
+  });

@@ -1,5 +1,7 @@
 // tailwind.config.js
-const { nextui } = require("@nextui-org/react");
+// const { nextui } = require("@nextui-org/react");
+import { nextui } from "@nextui-org/react";
+import { model } from "mongoose";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -14,9 +16,9 @@ module.exports = {
       fontFamily:{
         Lora:["Lora", "serif"],
         Explora:["Explora", "serif"]
-      }
+      },
     },
   },
   darkMode: "class",
-  plugins: [nextui()]
+  plugins: [nextui()],
 }

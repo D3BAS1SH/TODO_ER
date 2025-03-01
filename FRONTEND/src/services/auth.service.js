@@ -10,6 +10,10 @@ class UserAuthService{
             }
         })
 
+        this.publicEndpoints = ['/login', '/register'];
+        this.isRefreshing = false;
+        this.pendingRequests = [];
+
         this.setupInterceptors()
     }
 
@@ -33,18 +37,63 @@ class UserAuthService{
             async(error)=>{
                 
                 const originalRequest=error.config;
+
+                const isPublicEndpoint = this.publicEndpoints.some(
+                    endpoint => originalRequest.url.includes(endpoint)
+                );
+
+                if (isPublicEndpoint) {
+                    return Promise.reject(error);
+                }
                 
                 if(error.response?.status===401 && !originalRequest._retry){
                     
                     originalRequest._retry=true
 
-                    try {
-                        await this.getRefreshTokens()
-                        return this.httpClient(originalRequest)
-                    } catch (error) {
-                        await this.logout()
-                        throw error
+                    if (!this.isRefreshing) {
+                        this.isRefreshing = true;
+
+                        try {
+                            await this.getRefreshTokens();
+                            
+                            // Process pending requests
+                            this.pendingRequests.forEach(cb => cb());
+                            this.pendingRequests = [];
+                            
+                            // Retry the original request
+                            return this.httpClient(originalRequest);
+                        } catch (refreshError) {
+                            // If refresh fails, reject all pending requests
+                            this.pendingRequests.forEach(cb => cb(refreshError));
+                            this.pendingRequests = [];
+                            
+                            // Clear state and redirect to login
+                            await this.logout();
+                            return Promise.reject(refreshError);
+                        } finally {
+                            this.isRefreshing = false;
+                        }
+                    } else {
+                        // Queue the request if refresh is already in progress
+                        return new Promise((resolve, reject) => {
+                            this.pendingRequests.push((error) => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve(this.httpClient(originalRequest));
+                                }
+                            });
+                        });
                     }
+
+                    // try {
+                    //     console.log("Triggering from Interceptors.")
+                    //     await this.getRefreshTokens()
+                    //     return this.httpClient(originalRequest)
+                    // } catch (error) {
+                    //     await this.logout()
+                    //     throw error
+                    // }
                 }
                 return Promise.reject(error)
             }
@@ -90,6 +139,7 @@ class UserAuthService{
             const response = await this.httpClient.post('/login',credentials);
             return response
         } catch (error) {
+            console.log(error)
             const HandledError = this.handleError(error)
             throw HandledError
         }
@@ -107,7 +157,7 @@ class UserAuthService{
 
     async getRefreshTokens(){
         try {
-            const response = await this.httpClient.post('refresh-token');
+            const response = await this.httpClient.post('/refresh-token');
             return response
         } catch (error) {
             throw this.handleError(error)
@@ -125,9 +175,10 @@ class UserAuthService{
     }
 
     handleError(error){
+        console.log(error);
         if (error.response) {
             // Server responded with error
-            return new Error(error.response.data.message || 'Server error');
+            return new Error(error.response?.data?.message || 'Server error');
         }
         if (error.request) {
             // Request made but no response

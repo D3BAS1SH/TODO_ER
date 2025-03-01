@@ -1,5 +1,8 @@
+import { useAuth } from "../hooks/useAuth.hook.js";
 import Insight from "../components/Insight";
 import LoginComp from "../components/Login.Component";
+import { Toaster,toast } from "react-hot-toast";
+import { useEffect } from "react";
 
 const Quotes=[
   {
@@ -22,17 +25,36 @@ const Quotes=[
 
 const Homepage = () => {
   
+  const {error} = useAuth();
   const RandomNumber = Math.floor(Math.random()*Quotes.length);
+
+  useEffect(()=>{
+    if(error){
+      toast.error(error);
+    }
+  },[error])
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-10 rounded-md p-8 gap-6 h-full">
-      <section className="h-full md:col-span-6 hidden md:block">
-        <Insight author={Quotes[RandomNumber].author} quote={Quotes[RandomNumber].quote} />
-      </section>
-      <section className="h-full col-span-4 md:block">
-        <LoginComp/>
-      </section>
-    </div>
+    <>
+      <Toaster position="bottom-left" toastOptions={{
+          style: {
+            zIndex: 9999,
+            background: "#333",
+            color: "#fff",
+            pointerEvents:'all'
+          },
+          duration:5000
+        }}
+        />
+      <div className="grid grid-cols-1 md:grid-cols-10 rounded-md p-8 gap-6 h-full">  
+        <section className="h-full md:col-span-6 hidden md:block">
+          <Insight author={Quotes[RandomNumber].author} quote={Quotes[RandomNumber].quote} />
+        </section>
+        <section className="h-full col-span-4 md:block">
+          <LoginComp/>
+        </section>
+      </div>
+    </>
   )
 }
 
