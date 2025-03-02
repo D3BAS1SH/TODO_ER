@@ -21,7 +21,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-100">
         <Navigation />
-        <div className="container mx-auto p-8 h-[47rem]">
+        <div className="container mx-auto p-0 h-[47rem]">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/register" element={<RegisterPage />} />
