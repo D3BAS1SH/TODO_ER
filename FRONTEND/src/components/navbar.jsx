@@ -6,9 +6,7 @@ const Navigation = () => {
   const location = useLocation();
   const {
     isAuthenticated,
-    loading,
     logout,
-    error,
     user
   } = useAuth();
 
@@ -42,7 +40,7 @@ const Navigation = () => {
             <DropdownTrigger>
               <Button isIconOnly variant="light" className="flex items-center">
                 <Avatar
-                  src={user?.image || "/default-avatar.png"}
+                  src={user?.avatar || "/default-avatar.png"}
                   size="sm"
                   alt="Profile"
                 />
@@ -52,7 +50,7 @@ const Navigation = () => {
               <DropdownItem key="profile" as={Link} to="/profile">
                 {user?.fullname || "Profile"}
               </DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleOnClick}>
+              <DropdownItem key="logout" color="danger">
                 Stats
               </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={handleOnClick}>
