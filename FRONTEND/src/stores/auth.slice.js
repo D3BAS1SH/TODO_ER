@@ -111,7 +111,7 @@ const authSlice = createSlice({
         })
         .addCase(LoginUser.fulfilled,(state,action)=>{
             state.error=null;
-            state.user=action.payload;
+            state.user=action.payload.data.user;
             state.isAuthenticated=true;
             state.loading=false;
         })
