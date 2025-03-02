@@ -6,13 +6,11 @@ import { Input } from "@nextui-org/input"
 import { Button } from "@nextui-org/button"
 import { Avatar } from "@nextui-org/avatar"
 import {Image} from "@nextui-org/image"
+import { useAuthUserData } from "../hooks/useAuth.hook.js"
 
 const Profile = () => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [userInfo, setUserInfo] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-  })
+  const [userInfo, setUserInfo] = useState(useAuthUserData().user);
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -35,9 +33,9 @@ const Profile = () => {
           onPress={() => setIsExpanded(!isExpanded)}
         >
           <CardBody className="flex flex-col items-center gap-4 p-6">
-            <Avatar src="/placeholder.svg?height=100&width=100" className="w-24 h-24" isBordered />
+            <Avatar src={userInfo.avatar} className="w-24 h-24" isBordered />
             <div className="text-center">
-              <h2 className="text-xl font-semibold">{userInfo.name}</h2>
+              <h2 className="text-xl font-semibold">{userInfo.fullname}</h2>
               <p className="text-default-500">{userInfo.email}</p>
             </div>
           </CardBody>
