@@ -1,5 +1,5 @@
 import { Card, CardBody, Button, Input } from "@nextui-org/react"
-import { useAuth } from "../hooks/useAuth.hook.js";
+import { useAuth, useAuthIsLoading } from "../hooks/useAuth.hook.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -8,10 +8,10 @@ const RegisterComponent = () => {
   
   const navigate = useNavigate();
   const {
-    loading,
     error,
     register
   } = useAuth();
+  const {loading} = useAuthIsLoading();
 
   const [formData,setFormData] = useState({
     username:'',

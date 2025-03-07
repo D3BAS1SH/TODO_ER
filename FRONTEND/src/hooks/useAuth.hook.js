@@ -1,16 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import {RegisterUser,LoginOut,LoginUser} from "../stores/auth.slice.js";
+import {RegisterUser,LoginOut,LoginUser,GetCurrentUser} from "../stores/auth.slice.js";
 
 export const useAuth = () =>{
     const dispatch = useDispatch();
     const login = (credential) => dispatch(LoginUser(credential));
     const logout= () => dispatch(LoginOut());
     const register = (userData) => dispatch(RegisterUser(userData));
+    const getCurrentUser = () => dispatch(GetCurrentUser());
 
     return {
         login,
         logout,
-        register
+        register,
+        getCurrentUser
     }
 }
 

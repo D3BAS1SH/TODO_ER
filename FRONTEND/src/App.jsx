@@ -1,11 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./hooks/useAuth.hook";
+import { useAuthIsAuthentic } from "./hooks/useAuth.hook";
 import Navigation from "./components/navbar";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const {isAuthenticated} = useAuth();
-  
+  const {isAuthenticated} = useAuthIsAuthentic();
   if (!isAuthenticated) return <Navigate to="/" />;
   return children;
 };

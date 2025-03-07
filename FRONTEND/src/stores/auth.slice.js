@@ -125,10 +125,12 @@ const authSlice = createSlice({
             state.error=null;
         })
         .addCase(LoginOut.fulfilled,(state,action)=>{
+            console.log("Log out thunk hitting");
             state.error=null;
             state.isAuthenticated=false;
             state.loading=false;
             state.user=null;
+            console.log("Log out thunk complete");
         })
         .addCase(LoginOut.rejected,(state,action)=>{
             state.error=action.payload;

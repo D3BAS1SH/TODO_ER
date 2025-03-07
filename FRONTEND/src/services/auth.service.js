@@ -146,7 +146,7 @@ class UserAuthService{
     }
 
     async logout(){
-        try {            
+        try {
             await this.httpClient.post('/logout');
             this.clearState()
         } catch (error) {

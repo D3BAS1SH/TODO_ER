@@ -1,6 +1,7 @@
 import { Navbar, NavbarBrand, NavbarContent, Button, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import { Link, useLocation } from "react-router-dom";
 import {useAuth, useAuthIsAuthentic, useAuthUserData} from "../hooks/useAuth.hook.js";
+import { persistor } from "../stores/index.js";
 
 const Navigation = () => {
   const location = useLocation();
@@ -14,7 +15,8 @@ const Navigation = () => {
     e.preventDefault();
     try {
       await logout();
-      
+      persistor.purge();
+      alert("Logout success");
     } catch (error) {
       throw error
     }

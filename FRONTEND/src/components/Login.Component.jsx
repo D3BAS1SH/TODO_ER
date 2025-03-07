@@ -1,5 +1,5 @@
 import { Card,CardBody, Button, Input } from "@nextui-org/react"
-import { useAuth } from "../hooks/useAuth.hook.js";
+import { useAuth, useAuthIsLoading } from "../hooks/useAuth.hook.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {validator} from "../utils/email.validator.js";
@@ -8,7 +8,8 @@ import {toast} from "react-hot-toast";
 const LoginComponent = () => {
 
   const navigate = useNavigate();
-  const {loading,login} = useAuth();
+  const {login} = useAuth();
+  const {loading} = useAuthIsLoading();
 
   const [creds,setCreds] = useState({
     input:'',
