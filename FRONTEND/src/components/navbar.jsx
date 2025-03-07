@@ -1,13 +1,13 @@
 import { Navbar, NavbarBrand, NavbarContent, Button, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import { Link, useLocation } from "react-router-dom";
-import {useAuth} from "../hooks/useAuth.hook.js";
+import {useAuth, useAuthIsAuthentic, useAuthUserData} from "../hooks/useAuth.hook.js";
 
 const Navigation = () => {
   const location = useLocation();
+  const {isAuthenticated} = useAuthIsAuthentic();
+  const {user} = useAuthUserData();
   const {
-    isAuthenticated,
     logout,
-    user
   } = useAuth();
 
   const handleOnClick = async (e) =>{
@@ -50,7 +50,7 @@ const Navigation = () => {
               <DropdownItem key="profile" as={Link} to="/profile">
                 {user?.fullname || "Profile"}
               </DropdownItem>
-              <DropdownItem key="logout" color="danger">
+              <DropdownItem key="stats" color="danger">
                 Stats
               </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={handleOnClick}>
