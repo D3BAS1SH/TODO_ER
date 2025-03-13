@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import {RegisterUser,LoginOut,LoginUser,GetCurrentUser} from "../stores/auth.slice.js";
+import {RegisterUser,LoginOut,LoginUser,GetCurrentUser,UpdateAvatar} from "../stores/auth.slice.js";
 
 export const useAuth = () =>{
     const dispatch = useDispatch();
@@ -7,12 +7,14 @@ export const useAuth = () =>{
     const logout= () => dispatch(LoginOut());
     const register = (userData) => dispatch(RegisterUser(userData));
     const getCurrentUser = () => dispatch(GetCurrentUser());
+    const updateAvatar = (filepath) => dispatch(UpdateAvatar(filepath));
 
     return {
         login,
         logout,
         register,
-        getCurrentUser
+        getCurrentUser,
+        updateAvatar
     }
 }
 

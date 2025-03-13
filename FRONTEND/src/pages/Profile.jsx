@@ -6,11 +6,34 @@ import { Input } from "@nextui-org/input"
 import { Button } from "@nextui-org/button"
 import { Avatar } from "@nextui-org/avatar"
 import {Image} from "@nextui-org/image"
-import { useAuthUserData } from "../hooks/useAuth.hook.js"
+import { useAuthUserData,useAuth,useAuthIsLoading } from "../hooks/useAuth.hook.js"
+import toast from "react-hot-toast"
 
 const Profile = () => {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
   const [userInfo, setUserInfo] = useState(useAuthUserData().user);
+  const [isStateLoading,_] = useState(useAuthIsLoading().loading);
+  const [file,setFile] = useState(null);
+
+  const {updateAvatar} = useAuth();
+
+  const handleFileHandle = (e) =>{
+    e.preventDefault();
+    console.log(e);
+    const filepath = e.target.files[0];
+    console.log(filepath);
+    setFile(filepath)
+  }
+
+  const handleOnClickUpdate = async() => {
+    try {
+      await updateAvatar(file);
+      toast.success("Successful updated.");
+    } catch (error) {
+      console.log(error);
+      toast.error("Update failed of Avatar.");
+    }
+  }
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -48,8 +71,8 @@ const Profile = () => {
           <Accordion>
             <AccordionItem key="1" title="Update profile picture" className="px-2">
               <div className="flex flex-col gap-4 p-2">
-                <Input type="file" accept="image/*" label="Choose new profile picture" />
-                <Button color="primary">Upload Picture</Button>
+                <Input type="file" label="Choose new profile picture" onChange={handleFileHandle}/>
+                <Button color="primary" isLoading={isStateLoading} onClick={handleOnClickUpdate}>Upload Picture</Button>
               </div>
             </AccordionItem>
             <AccordionItem key="2" title="Update profile information" className="px-2">

@@ -174,6 +174,30 @@ class UserAuthService{
         }
     }
 
+    async updateAvatar(filePath){
+        try {
+            console.log("From Service")
+            console.log(filePath);
+            if(!filePath){
+                throw new Error("File not exists to be sent.")
+            }
+            const formData = new FormData();
+            formData.append('avatar',filePath);
+
+            const config={
+                headers:{
+                    'Content-type':'multipart/form-data'
+                }
+            }
+
+            const response = await this.httpClient.patch('/update-avatar',formData,config); 
+            return response;
+        } catch (error) {
+            const HandledError = this.handleError(error)
+            throw HandledError
+        }
+    }
+
     handleError(error){
         console.log(error);
         if (error.response) {

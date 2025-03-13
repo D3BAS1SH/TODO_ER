@@ -79,6 +79,21 @@ export const GetCurrentUser = createAsyncThunk(
     }
 )
 
+export const UpdateAvatar = createAsyncThunk(
+    "auth/updateavatar",
+    async (filepath,{rejectWithValue})=>{
+        try {
+            if(!filepath){
+                return rejectWithValue("File Path not found");
+            }
+            const response = await UserAuthService.updateAvatar(filepath);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue("Avatar Updation failed.");
+        }
+    }
+)
+
 const authSlice = createSlice({
     name:"Auth",
     initialState,
@@ -161,6 +176,20 @@ const authSlice = createSlice({
             state.user=action.payload;
         })
         .addCase(GetCurrentUser.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(UpdateAvatar.pending,(state)=>{
+            state.loading=true;
+            state.error=state.error?state.error:null;
+        })
+        .addCase(UpdateAvatar.fulfilled,(state,action)=>{
+            state.error=null;
+            state.isAuthenticated=true;
+            state.loading=false;
+            state.user=action.payload.data.user;
+        })
+        .addCase(UpdateAvatar.rejected,(state,action)=>{
             state.error=action.payload;
             state.loading=false;
         })
