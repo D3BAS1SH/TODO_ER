@@ -12,10 +12,10 @@ import toast from "react-hot-toast"
 const Profile = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [userInfo, setUserInfo] = useState(useAuthUserData().user);
-  const [isStateLoading,_] = useState(useAuthIsLoading().loading);
   const [file,setFile] = useState(null);
 
   const {updateAvatar} = useAuth();
+  const {loading} = useAuthIsLoading();
 
   const handleFileHandle = (e) =>{
     e.preventDefault();
@@ -42,16 +42,16 @@ const Profile = () => {
       {/* Cover Image Section */}
       <div className="relative w-full h-[300px] bg-neutral-800">
         <Image
-          src="/placeholder.svg?height=300&width=1200"
+          src={"/placeholder.svg?height=300&width=1200"}
           alt="Cover"
           width={1200}
           height={300}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
 
         {/* Profile Card */}
         <Card
-          className="absolute left-1/2 transform -translate-x-1/2 -bottom-20 w-full max-w-md mx-auto shadow-lg"
+          className="absolute left-1/2 transform -translate-x-1/2 -bottom-20 w-full max-w-md mx-auto shadow-lg z-50"
           isPressable
           onPress={() => setIsExpanded(!isExpanded)}
         >
@@ -72,12 +72,12 @@ const Profile = () => {
             <AccordionItem key="1" title="Update profile picture" className="px-2">
               <div className="flex flex-col gap-4 p-2">
                 <Input type="file" label="Choose new profile picture" onChange={handleFileHandle}/>
-                <Button color="primary" isLoading={isStateLoading} onClick={handleOnClickUpdate}>Upload Picture</Button>
+                <Button color="primary" isLoading={loading} onClick={handleOnClickUpdate}>Upload Picture</Button>
               </div>
             </AccordionItem>
             <AccordionItem key="2" title="Update profile information" className="px-2">
               <div className="flex flex-col gap-4 p-2">
-                <Input label="Full Name" placeholder="Enter your full name" defaultValue={userInfo.name} />
+                <Input label="Full Name" placeholder="Enter your full name" defaultValue={userInfo.fullname} />
                 <Input label="Email" placeholder="Enter your email" defaultValue={userInfo.email} type="email" />
                 <Button color="primary">Update Information</Button>
               </div>
