@@ -16,7 +16,7 @@
     "@nextui-org/react": "^2.4.8",
     "@reduxjs/toolkit": "^2.3.0",
     "@welldone-software/why-did-you-render": "^8.0.3",
-    "axios": "^1.7.7",
+    "axios": "^1.8.2",
     "framer-motion": "^11.11.10",
     "frontend": "file:",
     "lucide-react": "^0.474.0",
