@@ -198,6 +198,18 @@ class UserAuthService{
         }
     }
 
+    async updateAccountDetail(accinfo){
+        console.log("Service hit");
+        const {fullname,email} = accinfo;
+        if(!fullname || !email){
+            throw new Error("Required info not found.");
+        }
+        
+        const response = this.httpClient.patch('/update-account-detail',accinfo);
+        console.log("Service hit Success");
+        return response;
+    }
+
     handleError(error){
         console.log(error);
         if (error.response) {

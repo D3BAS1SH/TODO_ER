@@ -94,6 +94,23 @@ export const UpdateAvatar = createAsyncThunk(
     }
 )
 
+export const UpdateAccountDetail = createAsyncThunk(
+    "auth/updateaccounrdetails",
+    async (accinfo,{rejectWithValue})=>{
+        try {
+            console.log("In Update account detail thunk hitting");
+            if(!accinfo){
+                return rejectWithValue("No account info found");
+            }
+            const responseThunk = await UserAuthService.updateAccountDetail(accinfo);
+            console.log("In Update account detail thunk hitting success");
+            return responseThunk.data;
+        } catch (error) {
+            return rejectWithValue("Account detail upload failed.");
+        }
+    }
+)
+
 const authSlice = createSlice({
     name:"Auth",
     initialState,
@@ -190,6 +207,20 @@ const authSlice = createSlice({
             state.user=action.payload.data.user;
         })
         .addCase(UpdateAvatar.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(UpdateAccountDetail.pending,(state,_)=>{
+            state.loading=true;
+            state.error=state.error?state.error:null;
+        })
+        .addCase(UpdateAccountDetail.fulfilled,(state,action)=>{
+            state.error=null;
+            state.isAuthenticated=true;
+            state.loading=false;
+            state.user=action.payload.data;
+        })
+        .addCase(UpdateAccountDetail.rejected,(state,action)=>{
             state.error=action.payload;
             state.loading=false;
         })
