@@ -205,9 +205,17 @@ class UserAuthService{
             throw new Error("Required info not found.");
         }
         
-        const response = this.httpClient.patch('/update-account-detail',accinfo);
+        const response = await this.httpClient.patch('/update-account-detail',accinfo);
         console.log("Service hit Success");
         return response;
+    }
+
+    async changePassword(passwordObj){
+        const {oldPassword,newPassword} = passwordObj;
+        if(!oldPassword||!newPassword){
+            throw new Error("Required Info not found");
+        }
+        await this.httpClient.post('/change-password',{oldPassword,newPassword});
     }
 
     handleError(error){
