@@ -10,7 +10,7 @@ import { useAuthUserData,useAuth,useAuthIsLoading,useAuthError } from "../hooks/
 import toast,{Toaster} from "react-hot-toast"
 
 const Profile = () => {
-  const {updateAvatar,updateAccountDetail} = useAuth();
+  const {updateAvatar,updateAccountDetail,changePassword} = useAuth();
   const {loading} = useAuthIsLoading();
   const {user} = useAuthUserData();
   const {error} = useAuthError();
@@ -18,6 +18,39 @@ const Profile = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [file,setFile] = useState(null);
   const [myState,setMyState] = useState({fullname:"",email:""});
+  const [password,setPassword] = useState({oldPassword:"",newPassword:"",confirmPassword:""})
+
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+    try {
+      const {name,value} = e.target;
+      setPassword(prev=>({
+        ...prev,
+        [name]:value
+      }))
+      console.log(password)
+    } catch (error) {
+      toast.error(error);
+      console.log(error);
+    }
+  }
+
+  const handleChangePasswordClick = async() =>{
+    try {
+
+      if(!(password.newPassword===password.confirmPassword)){
+        throw new Error("Confirm password and new password is incorrect.");
+      }
+      console.log("Hitting On Click of password change");
+      await changePassword(password);
+      console.log("Hitting On Click of password change Success");
+      toast.success("Password changed successfully");
+      setPassword({confirmPassword:"",newPassword:"",oldPassword:""})
+    } catch (err) {
+      console.log(err);
+      toast.error( error || err.message ||"Password change failed.");
+    }
+  }
   
   const handleNameChange = (e) => {
     e.preventDefault();
@@ -107,22 +140,22 @@ const Profile = () => {
             <AccordionItem key="1" title="Update profile picture" className="px-2">
               <div className="flex flex-col gap-4 p-2">
                 <Input type="file" label="Choose new profile picture" onChange={handleFileHandle}/>
-                <Button color="primary" isLoading={loading} onClick={handleOnClickUpdate}>Upload Picture</Button>
+                <Button color="primary" isLoading={loading} onPress={handleOnClickUpdate}>Upload Picture</Button>
               </div>
             </AccordionItem>
             <AccordionItem key="2" title="Update profile information" className="px-2">
               <div className="flex flex-col gap-4 p-2">
                 <Input name="fullname" label="Full Name" placeholder="Enter your full name" defaultValue={user.fullname} onChange={handleNameChange}/>
                 <Input name="email" label="Email" placeholder="Enter your email" defaultValue={user.email} type="email"  onChange={handleNameChange}/>
-                <Button color="primary" onClick={handleAccDetailClick} isLoading={loading}>Update Information</Button>
+                <Button color="primary" onPress={handleAccDetailClick} isLoading={loading}>Update Information</Button>
               </div>
             </AccordionItem>
             <AccordionItem key="3" title="Change password" className="px-2">
               <div className="flex flex-col gap-4 p-2">
-                <Input label="Current Password" type="password" placeholder="Enter current password" />
-                <Input label="New Password" type="password" placeholder="Enter new password" />
-                <Input label="Confirm New Password" type="password" placeholder="Confirm new password" />
-                <Button color="primary">Change Password</Button>
+                <Input name="oldPassword" label="Current Password" type="password" placeholder="Enter current password" value={password.oldPassword} onChange={handlePasswordChange}/>
+                <Input name="newPassword" label="New Password" type="password" placeholder="Enter new password" value={password.newPassword} onChange={handlePasswordChange}/>
+                <Input name="confirmPassword" label="Confirm New Password" type="password" placeholder="Confirm new password" value={password.confirmPassword} onChange={handlePasswordChange}/>
+                <Button color="primary" isLoading={loading} onPress={handleChangePasswordClick}>Change Password</Button>
               </div>
             </AccordionItem>
           </Accordion>
