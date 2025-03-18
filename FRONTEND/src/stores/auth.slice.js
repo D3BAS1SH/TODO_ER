@@ -111,6 +111,22 @@ export const UpdateAccountDetail = createAsyncThunk(
     }
 )
 
+export const ChangePasswordThunk = createAsyncThunk(
+    "auth/changepassword",
+    async (passObj,{rejectWithValue})=>{
+        try {
+            // console.log("Password change thunk hitting.")
+            if(!passObj){
+                return rejectWithValue("No password information found");
+            }
+            await UserAuthService.changePassword(passObj);
+            // console.log("Password change thunk hitting success");
+        } catch (error) {
+            return rejectWithValue("Password changing failed.")
+        }
+    }
+)
+
 const authSlice = createSlice({
     name:"Auth",
     initialState,
@@ -221,6 +237,20 @@ const authSlice = createSlice({
             state.user=action.payload.data;
         })
         .addCase(UpdateAccountDetail.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(ChangePasswordThunk.pending,(state,_)=>{
+            state.loading=true;
+            state.error=state.error?state.error:null;
+        })
+        .addCase(ChangePasswordThunk.fulfilled,(state,action)=>{
+            state.error=null;
+            state.isAuthenticated=true;
+            state.loading=false;
+            state.user=state.user;
+        })
+        .addCase(ChangePasswordThunk.rejected,(state,action)=>{
             state.error=action.payload;
             state.loading=false;
         })
