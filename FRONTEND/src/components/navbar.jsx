@@ -11,8 +11,7 @@ const Navigation = () => {
     logout,
   } = useAuth();
 
-  const handleOnClick = async (e) =>{
-    e.preventDefault();
+  const handleOnClick = async () =>{
     try {
       await logout();
       persistor.purge();
@@ -55,7 +54,7 @@ const Navigation = () => {
               <DropdownItem key="stats" color="danger">
                 Stats
               </DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleOnClick}>
+              <DropdownItem key="logout" color="danger" onPress={handleOnClick}>
                 Logout
               </DropdownItem>
             </DropdownMenu>
