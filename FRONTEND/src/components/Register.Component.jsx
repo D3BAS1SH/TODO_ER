@@ -1,4 +1,4 @@
-import { Card, CardBody, Button, Input } from "@nextui-org/react"
+import { Card, CardBody, Button, Input } from "@heroui/react"
 import { useAuth, useAuthIsLoading } from "../hooks/useAuth.hook.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";

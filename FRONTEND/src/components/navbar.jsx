@@ -1,4 +1,4 @@
-import { Navbar, NavbarBrand, NavbarContent, Button, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarContent, Button, Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
 import { Link, useLocation } from "react-router-dom";
 import {useAuth, useAuthIsAuthentic, useAuthUserData} from "../hooks/useAuth.hook.js";
 import { persistor } from "../stores/index.js";

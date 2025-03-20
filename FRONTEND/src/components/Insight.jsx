@@ -1,4 +1,4 @@
-import {Card,CardBody} from "@nextui-org/react";
+import {Card,CardBody} from "@heroui/react";
 
 const Insight = ({author="Walt Whitman",quote="My words itch at your ears till you understand them"}) => {
   return (
