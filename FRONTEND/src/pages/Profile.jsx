@@ -1,11 +1,11 @@
 
 import { useEffect, useState } from "react"
-import { Card, CardBody } from "@nextui-org/card"
-import { Accordion, AccordionItem } from "@nextui-org/accordion"
-import { Input } from "@nextui-org/input"
-import { Button } from "@nextui-org/button"
-import { Avatar } from "@nextui-org/avatar"
-import {Image} from "@nextui-org/image"
+import { Card, CardBody } from "@heroui/card"
+import { Accordion, AccordionItem } from "@heroui/accordion"
+import { Input } from "@heroui/input"
+import { Button } from "@heroui/button"
+import { Avatar } from "@heroui/avatar"
+import {Image} from "@heroui/image"
 import { useAuthUserData,useAuth,useAuthIsLoading,useAuthError } from "../hooks/useAuth.hook.js"
 import toast,{Toaster} from "react-hot-toast"
 
