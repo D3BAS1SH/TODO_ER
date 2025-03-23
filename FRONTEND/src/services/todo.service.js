@@ -24,120 +24,91 @@ class TodoService{
         this.setupInterceptor();
     }
 
-    //Request Intereptor
-    setupInterceptor(){
+    setupInterceptors(){
+
         this.httpClient.interceptors.request.use(
             (config)=>{
-                Store.dispatch(setLoading(true));
-                return config
+                return config;
             },
             (error)=>{
-                Store.dispatch(setLoading(false));
                 return Promise.reject(error);
             }
         )
 
         this.httpClient.interceptors.response.use(
             (response)=>{
-                Store.dispatch(setLoading(false))
                 return response
             },
-            async (error)=>{
-                const originalRequest = error.config;
-                if(error.response?.status===401 && !originalRequest._retry){
-                    originalRequest._retry=true;
+            async(error)=>{
+                
+                const originalRequest=error.config;
 
-                    try {
-                        await UserAuthService.getRefreshTokens();
-                        return this.httpClient(originalRequest)
-                    } catch (error) {
-                        await UserAuthService.logout();
-                        throw error;
+                const isPublicEndpoint = this.publicEndpoints.some(
+                    endpoint => originalRequest.url.includes(endpoint)
+                );
+
+                if (isPublicEndpoint) {
+                    return Promise.reject(error);
+                }
+                
+                if(error.response?.status===401 && !originalRequest._retry){
+
+                    console.log("Getting Error Response")
+                    console.log(error);
+                    
+                    originalRequest._retry=true
+
+                    if (!this.isRefreshing) {
+                        this.isRefreshing = true;
+
+                        try {
+                            await this.getRefreshTokens();
+                            
+                            this.pendingRequests.forEach(cb => cb());
+                            this.pendingRequests = [];
+                            
+                            return this.httpClient(originalRequest);
+                        } catch (refreshError) {
+                            this.pendingRequests.forEach(cb => cb(refreshError));
+                            this.pendingRequests = [];
+                            
+                            await this.logout();
+                            return Promise.reject(refreshError);
+                        } finally {
+                            this.isRefreshing = false;
+                        }
+                    } else {
+                        return new Promise((resolve, reject) => {
+                            this.pendingRequests.push((error) => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve(this.httpClient(originalRequest));
+                                }
+                            });
+                        });
                     }
                 }
 
-                Store.dispatch(setLoading(false));
-                return Promise.reject(error);
+                if (error.response?.status === 429) {
+                    return this.retryWithBackoff(originalRequest);
+                }
+
+                return Promise.reject(error)
             }
         );
     }
 
-    // async getAllTodos(page=1,limit=5){
-    //     try {
-    //         const response = await this.httpClient.get(`/get-all-todo/`,{params:{
-    //             page,
-    //             limit
-    //         }});
-    //         Store.dispatch(setTodo(response.data));
-    //         return response.data;
-    //     } catch (error) {
-    //         const handledError=this.handleError(error);
-    //         Store.dispatch(setError(handledError.message));
-    //         throw handledError
-    //     }
-    // }
-
-    // async getTodoById(todoId){
-
-    //     try {
-    //         const response = await this.httpClient.get(`/get-a-todo/${todoId}`)
-    //         Store.dispatch(setSelectedTodo(response.data))
-    //         return response.data
-    //     } catch (error) {
-    //         const handledError = this.handleError(error);
-    //         Store.dispatch(setError(handledError.message));
-    //         return handledError
-    //     }
-    // }
-    
-    async createTodo(data){
-        try {
-            const response = await this.httpClient.post('/create-todo/',data);
-            return response.data;
-        } catch (error) {
-            throw this.handleError(error);
-        } 
+    async retryWithBackoff(request, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                return await this.httpClient(request);
+            } catch (error) {
+                if (i === retries - 1) throw error;
+            }
+        }
     }
-
-    // async createTodo(data){
-        
-    //     try {
-    //         Store.dispatch(setLoading(true))
-    //         const response = await this.httpClient.post('/create-todo',data)
-    //         Store.dispatch(setAddTodo(response.data));
-    //         return response.data
-    //     } catch (error) {
-    //         const handledError = this.handleError(error)
-    //         Store.dispatch(setError(handledError.message))
-    //         throw handledError
-    //     }
-    // }
-    
-    // async updateTodo(todoId,todoChange){
-        
-    //     try {
-    //         const response = await this.httpClient.patch(`/update-todo/${todoId}`,todoChange)
-    //         Store.dispatch(updateTodo(response.data));
-    //         return response.data;
-    //     } catch (error) {
-    //         const handledError=this.handleError(error);
-    //         Store.dispatch(setError(handledError.message))
-    //         return handledError;
-    //     }
-    // }
-    
-    // async deleteaTodo(todoId){
-        
-    //     try {
-    //         const response = await this.httpClient.delete(`/delete-a-todo/${todoId}`);
-    //         Store.dispatch(deleteTodo(response.data));
-    //         return response.data
-    //     } catch (error) {
-    //         const handledError=this.handleError(error);
-    //         Store.dispatch(setError(handledError.message));
-    //         return handledError;
-    //     }
-    // }
 
     handleError(error){
         if(error.response){
