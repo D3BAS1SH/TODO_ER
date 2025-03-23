@@ -19,6 +19,8 @@ class UserAuthService{
 
     setupInterceptors(){
 
+        const MAX_TRIES = 5;
+
         //Request Interceptor
         this.httpClient.interceptors.request.use(
             (config)=>{
@@ -47,6 +49,9 @@ class UserAuthService{
                 }
                 
                 if(error.response?.status===401 && !originalRequest._retry){
+
+                    console.log("Getting Error Response")
+                    console.log(error);
                     
                     originalRequest._retry=true
 
@@ -95,9 +100,25 @@ class UserAuthService{
                     //     throw error
                     // }
                 }
+
+                if (error.response?.status === 429) {
+                    return this.retryWithBackoff(originalRequest);
+                }
+
                 return Promise.reject(error)
             }
         );
+    }
+
+    async retryWithBackoff(request, retries = 3, delay = 1000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i))); // Exponential backoff
+                return await this.httpClient(request);
+            } catch (error) {
+                if (i === retries - 1) throw error;
+            }
+        }
     }
 
     async register(userData){
