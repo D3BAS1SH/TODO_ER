@@ -7,11 +7,13 @@ const DashboardPage = () => {
 
   return (
     <div className="grid grid-cols-12 h-full gap-2">
-      <div className="col-span-2 h-full overflow-hidden">
+      <div className="col-span-2 h-full flex flex-col overflow-hidden">
         <TodoHeader/>
-        <Todos/>
+        <div className="flex-1 overflow-hidden">
+          <Todos/>
+        </div>
       </div>
-      <div className="col-span-10 h- overflow-hidden">
+      <div className="col-span-10 overflow-hidden">
         <Subtodos/>
       </div>
     </div>
