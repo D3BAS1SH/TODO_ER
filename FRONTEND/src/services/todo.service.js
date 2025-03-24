@@ -1,15 +1,4 @@
 import axios from "axios";
-import { Store } from "../stores";
-import UserAuthService from "./auth.service.js";
-import {
-    /*deleteTodo,
-    setAddTodo,
-    setError,*/
-    setLoading,
-    /*setSelectedTodo,
-    setTodo,
-    updateTodo*/
-} from '../stores/todo.slice.js';
 
 class TodoService{
     constructor(){
@@ -21,7 +10,7 @@ class TodoService{
             }
         });
 
-        this.setupInterceptor();
+        this.setupInterceptors();
     }
 
     setupInterceptors(){
@@ -110,15 +99,35 @@ class TodoService{
         }
     }
 
-    handleError(error){
-        if(error.response){
-            return new Error(error.response.data.message || "Server Error")
+    async createTodo(TodoObject){
+        try {
+            if(!TodoObject){
+                throw new Error("No New Todo Item Provided.");
+            }
+
+            const {Heading,Color} = TodoObject;
+            const response = await this.httpClient.post('/create-todo',{Heading:Heading,Color:Color});
+            return response;
+            
+        } catch (error) {
+            const HandledError = this.handleError(error)
+            throw HandledError
         }
-        if(error.request){
-            return new Error(error.request.data.message||"No response from the server");
+    }
+
+    handleError(error){
+        console.log(error);
+        if (error.response) {
+            return new Error(error.response?.data?.message || 'Server error');
+        }
+        if (error.request) {
+            return new Error('No response from server');
+        }
+        if (error.message === 'Network Error') {
+            return new Error('Network error. Please check your internet connection.');
         }
         return new Error('Request failed');
     }
 }
 
-export const todoServiceO = new TodoService();
+export default new TodoService();
