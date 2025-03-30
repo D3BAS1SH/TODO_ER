@@ -1,9 +1,16 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Todos from "../components/Todos"
 import Subtodos from "../components/Subtodos"
 import TodoHeader from "../components/TodoHeader"
+import {useTodo} from "../hooks/useTodo.hook";
 
 const DashboardPage = () => {
+
+  const {getAllTodoDispatcher} = useTodo();
+
+  useEffect(()=>{
+    getAllTodoDispatcher({page:1,limit:5});
+  },[])
 
   return (
     <div className="grid grid-cols-12 h-full gap-2">
