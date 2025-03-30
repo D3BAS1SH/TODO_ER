@@ -1,10 +1,12 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import { REHYDRATE } from "redux-persist"
 import todoService from '../services/todo.service.js';
 const initialState={
     todos:[],
     loading:false,
     error:null,
-    selectedTodo:null
+    selectedTodo:null,
+    _persist: {}
 }
 
 export const createTodoThunk = createAsyncThunk(
@@ -24,11 +26,47 @@ export const createTodoThunk = createAsyncThunk(
     }
 )
 
+export const getAllTodoThunk = createAsyncThunk(
+    'todo/GetAllTodo',
+    async(ParamsValues,{rejectWithValue})=>{
+        try {
+            if(!ParamsValues){
+                throw new Error("No Todo Params provided");
+            }
+
+            const response = await todoService.getAllTodo(ParamsValues);
+            const incomingTodos = response.data.data.docs;
+            const SubtodosOfIncomingTodos = incomingTodos.map((item)=>{
+                return {
+                    _id:item._id,
+                    subtodos:item.Subtodos
+                }
+            })
+            console.log(response);
+            return {
+                incomingTodos,
+                SubtodosOfIncomingTodos
+            };
+        } catch (error) {
+            return rejectWithValue(error?.message || "Todo Fetching failed.");
+        }
+    }
+)
+
 const todoSlice=createSlice({
     name:"Todos",
     initialState,
     extraReducers:(builder)=>{
         builder
+        .addCase(REHYDRATE, (state, action) => {
+            if (action.payload) {
+                return {
+                    ...state,
+                    ...action.payload.todo,
+                    loading: false,
+                };
+            }
+        })
         .addCase(createTodoThunk.pending,(state)=>{
             state.error=null;
             state.loading=true;
@@ -38,11 +76,26 @@ const todoSlice=createSlice({
             state.error=null;
             state.loading=false;
             state.todos.push(action.payload.data);
+            state.selectedTodo=state.selectedTodo;
         })
         .addCase(createTodoThunk.rejected,(state,action)=>{
             state.error=action.error.message;
             state.loading=false;
             state.selectedTodo=state.selectedTodo;
+        })
+        .addCase(getAllTodoThunk.pending,(state,_)=>{
+            state.error=null;
+            state.loading=true;
+        })
+        .addCase(getAllTodoThunk.fulfilled,(state,action)=>{
+            state.error=null;
+            state.loading=false;
+            state.todos=action.payload.incomingTodos;
+            state.selectedTodo=state.selectedTodo;
+        })
+        .addCase(getAllTodoThunk.rejected,(state,action)=>{
+            state.error=action.payload;
+            state.loading=false;
         })
     }
 })
