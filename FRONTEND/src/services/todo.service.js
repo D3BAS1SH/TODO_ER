@@ -115,6 +115,24 @@ class TodoService{
         }
     }
 
+    async getAllTodo(ParamValues){
+        try {
+            if(!ParamValues){
+                throw new Error("No Todo fetching Param values provided");
+            }
+
+            const {page = 1,limit = 10} = ParamValues;
+            const response = await this.httpClient.get('/get-all-todo/',{
+                params:{page,limit}
+            })
+            
+            return response;
+        } catch (error) {
+            const HandledError = this.handleError(error);
+            throw HandledError;
+        }
+    }
+
     handleError(error){
         console.log(error);
         if (error.response) {
