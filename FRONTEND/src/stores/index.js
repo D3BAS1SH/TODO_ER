@@ -3,17 +3,19 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./auth.slice.js";
 import todoReducer from './todo.slice.js';
+import subtoReducer from "./subtodo.slice.js";
 
 const rootReducer = combineReducers({
     auth:authReducer,
-    todo:todoReducer
+    todo:todoReducer,
+    subtodo:subtoReducer
 })
 
 //configure persistor
 const persistConfig = {
     key:'root',
     storage,
-    whitelist:["auth","todo"]
+    whitelist:["auth","todo","subtodo"]
 }
 
 //Creating persist Reducer from normal reducer
