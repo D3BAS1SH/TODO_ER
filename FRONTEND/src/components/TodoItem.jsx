@@ -1,33 +1,27 @@
-import { Checkbox, CheckboxGroup } from '@heroui/react'
+import { Checkbox } from '@heroui/react'
 import { Trash2 } from 'lucide-react';
-import React, { useState } from 'react'
+import React from 'react'
+import { useTodoAllTodo } from '../hooks/useTodo.hook';
 
-const TodoItem = ({TodoItems}) => {
+const TodoItem = () => {
     
-    const Items = ['lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5',
-        'lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5','lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5',
-        'lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5','lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5',
-        'lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5','lorem 1', 'lorem 2', 'lorem 3', 'lorem 4', 'lorem 5'
-    ];
-    const [selectedItems, setSelectedItems] = useState([]);
-
-    const handleSelectionChange = (selectedValues) => {
-        setSelectedItems(selectedValues);
-    };
+    const {todos} = useTodoAllTodo();
 
     return (
-        <CheckboxGroup value={selectedItems} onChange={handleSelectionChange}>
+        <div>
             {
-                Items.map(itemName=>{
+                todos.map(itemName=>{
                     return <div className='flex flex-row justify-between'>
-                        <Checkbox key={itemName} id={itemName} value={itemName}>
-                            {itemName}
+                        <Checkbox key={itemName._id} value={itemName._id} isSelected={itemName.Completed}>
+                            <p style={{color:itemName.Color}} className='font-semibold'>
+                                {itemName.Heading}
+                            </p>
                         </Checkbox>
                         <Trash2 size={'20px'}/>
                     </div>
                 })
             }
-        </CheckboxGroup>
+        </div>
     )
 }
 
