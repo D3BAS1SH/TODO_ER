@@ -3,6 +3,7 @@ import {
     createTodoThunk,
     getAllTodoThunk,
     deleteTodoThunk,
+    updateTodoThunk
 } from "../stores/todo.slice.js";
 
 export const useTodo = () => {
@@ -10,11 +11,13 @@ export const useTodo = () => {
     const createTodoDispatcher = (TodoObject) => dispatch(createTodoThunk(TodoObject));
     const getAllTodoDispatcher = (ParamValue) => dispatch(getAllTodoThunk(ParamValue));
     const deleteTodoDispatcher = (id) => dispatch(deleteTodoThunk(id));
+    const updateTodoDispatcher = (updateInfo) => dispatch(updateTodoThunk(updateInfo));
 
     return {
         createTodoDispatcher,
         getAllTodoDispatcher,
-        deleteTodoDispatcher
+        deleteTodoDispatcher,
+        updateTodoDispatcher
     }
 }
 
