@@ -125,8 +125,21 @@ class TodoService{
             const response = await this.httpClient.get('/get-all-todo/',{
                 params:{page,limit}
             })
-            
+
             return response;
+        } catch (error) {
+            const HandledError = this.handleError(error);
+            throw HandledError;
+        }
+    }
+
+    async deleteTodo(id){
+        try {
+            if(!id){
+                throw new Error("Id was not provided.");
+            }
+
+            await this.httpClient.delete('/delete-a-todo/',{params:{id}});
         } catch (error) {
             const HandledError = this.handleError(error);
             throw HandledError;
