@@ -146,6 +146,27 @@ class TodoService{
         }
     }
 
+    async updateTodo(updateInfo){
+        try {
+            if(!updateInfo){
+                throw new Error("not updated info provided");
+            }
+
+            const {Heading, Color, Completed, id} = updateInfo;
+
+            if(!id){
+                throw new Error("No Id mentioned to update the value.");
+            }
+
+            const response = await this.httpClient.patch("/update-todo/",{Heading,Color,Completed},{params:{id}})
+
+            return response;
+        } catch (error) {
+            const HandledError = this.handleError(error);
+            throw HandledError;
+        }
+    }
+
     handleError(error){
         console.log(error);
         if (error.response) {
