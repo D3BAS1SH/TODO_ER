@@ -53,6 +53,22 @@ export const getAllTodoThunk = createAsyncThunk(
     }
 )
 
+export const deleteTodoThunk = createAsyncThunk(
+    "todo/DeleteATodo",
+    async(id,{rejectWithValue})=>{
+        try {
+            if(!id){
+                return rejectWithValue("Id not provided.");
+            }
+            await todoService.deleteTodo(id);
+
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.message||"Failed during deletion of a todo.");
+        }
+    }
+)
+
 const todoSlice=createSlice({
     name:"Todos",
     initialState,
@@ -95,6 +111,20 @@ const todoSlice=createSlice({
         })
         .addCase(getAllTodoThunk.rejected,(state,action)=>{
             state.error=action.payload;
+            state.loading=false;
+        })
+        .addCase(deleteTodoThunk.pending,(state,_)=>{
+            state.error=null;
+            state.loading=true;
+        })
+        .addCase(deleteTodoThunk.fulfilled,(state,action)=>{
+            state.error=null;
+            state.loading=false;
+            state.todos=state.todos.filter(todo=> todo._id !== action.payload);
+            state.selectedTodo=state.selectedTodo;
+        })
+        .addCase(deleteTodoThunk.rejected,(state,action)=>{
+            state.error=action.error;
             state.loading=false;
         })
     }
