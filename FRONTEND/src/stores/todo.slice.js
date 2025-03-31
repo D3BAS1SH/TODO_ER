@@ -141,7 +141,7 @@ const todoSlice=createSlice({
             state.selectedTodo=state.selectedTodo;
         })
         .addCase(deleteTodoThunk.rejected,(state,action)=>{
-            state.error=action.error;
+            state.error=action.payload;
             state.loading=false;
         })
         .addCase(updateTodoThunk.pending,(state,_)=>{

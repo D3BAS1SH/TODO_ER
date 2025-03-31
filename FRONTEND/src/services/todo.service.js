@@ -106,7 +106,7 @@ class TodoService{
             }
 
             const {Heading,Color} = TodoObject;
-            const response = await this.httpClient.post('/create-todo',{Heading:Heading,Color:Color});
+            const response = await this.httpClient.post('create-todo',{Heading:Heading,Color:Color});
             return response;
             
         } catch (error) {
@@ -122,7 +122,7 @@ class TodoService{
             }
 
             const {page = 1,limit = 10} = ParamValues;
-            const response = await this.httpClient.get('/get-all-todo/',{
+            const response = await this.httpClient.get('get-all-todo/',{
                 params:{page,limit}
             })
 
@@ -138,8 +138,7 @@ class TodoService{
             if(!id){
                 throw new Error("Id was not provided.");
             }
-
-            await this.httpClient.delete('/delete-a-todo/',{params:{id}});
+            await this.httpClient.delete(`/delete-a-todo/${id}`);
         } catch (error) {
             const HandledError = this.handleError(error);
             throw HandledError;
