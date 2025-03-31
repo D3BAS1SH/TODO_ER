@@ -1,17 +1,20 @@
 import { useSelector,useDispatch } from "react-redux";
 import {
     createTodoThunk,
-    getAllTodoThunk
+    getAllTodoThunk,
+    deleteTodoThunk,
 } from "../stores/todo.slice.js";
 
 export const useTodo = () => {
     const dispatch = useDispatch();
     const createTodoDispatcher = (TodoObject) => dispatch(createTodoThunk(TodoObject));
     const getAllTodoDispatcher = (ParamValue) => dispatch(getAllTodoThunk(ParamValue));
+    const deleteTodoDispatcher = (id) => dispatch(deleteTodoThunk(id));
 
     return {
         createTodoDispatcher,
-        getAllTodoDispatcher
+        getAllTodoDispatcher,
+        deleteTodoDispatcher
     }
 }
 
