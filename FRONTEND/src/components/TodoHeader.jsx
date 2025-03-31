@@ -3,8 +3,8 @@ import { Plus } from 'lucide-react'
 import { Navbar, NavbarContent } from '@heroui/navbar'
 import { Button } from '@heroui/button'
 import {Input, Modal,ModalBody,ModalContent,ModalFooter,ModalHeader,useDisclosure} from "@heroui/react"
-import { useTodo, useTodoError, useTodoLoading } from '../hooks/useTodo.hook'
-import toast,{Toaster} from "react-hot-toast"
+import { useTodo, useTodoError, useTodoLoading } from '../hooks/useTodo.hook';
+import { useToast } from '../contexts/ToastContext'
 
 const TodoHeader = () => {
   const {isOpen,onOpen,onClose} = useDisclosure();
@@ -14,6 +14,7 @@ const TodoHeader = () => {
   const {loading} = useTodoLoading();
   const {error} = useTodoError();
   const {createTodoDispatcher} = useTodo();
+  const { showToast } = useToast();
 
   const handleButtonPressModal = () => {
     onOpen();
@@ -28,10 +29,15 @@ const TodoHeader = () => {
       console.log(`Heading : ${inputValue}, Color : ${color}`);
       const TodoObject = {Heading:inputValue.trim(),Color:color.trim()}
       await createTodoDispatcher(TodoObject);
-      toast.success("Todo Created Successfully");
+      showToast("Todo Created Successfully","success");
+      onClose();
+      setInputValue("");
+      setColor("#454545");
+      // toast.success("Todo Created Successfully");
     } catch (err) {
-      toast.error(error || "Some Error Happened")
-      console.log(error)
+      // toast.error(error || "Some Error Happened");
+      showToast(err||"Some Error Happened","error");
+      console.log(error);
     }
   }
 
@@ -50,16 +56,6 @@ const TodoHeader = () => {
 
   return (
     <Navbar>
-      <Toaster position="bottom-left" toastOptions={{
-        style: {
-          zIndex: 9999,
-          background: "#333",
-          color: "#fff",
-          pointerEvents:'all'
-        },
-        duration:5000
-      }}
-      />
         <NavbarContent>
             <Button color='primary' variant='flat' fullWidth radius='sm' onPress={handleButtonPressModal}>
                 <Plus size="32px"/>
