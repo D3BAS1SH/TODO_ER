@@ -53,6 +53,23 @@ export const getAllTodoThunk = createAsyncThunk(
     }
 )
 
+export const updateTodoThunk = createAsyncThunk(
+    "todo/UpdateATodo",
+    async(updateinfo,{rejectWithValue})=>{
+        try {
+            if(!updateinfo){
+                return rejectWithValue("No updated value object provided.");
+            }
+
+            const response = await todoService.updateTodo(updateinfo);
+
+            return {id:response.data.data._id,updatedTodo:response.data.data};
+        } catch (error) {
+            return rejectWithValue(error?.message || "Todo updation failed.");
+        }
+    }
+)
+
 export const deleteTodoThunk = createAsyncThunk(
     "todo/DeleteATodo",
     async(id,{rejectWithValue})=>{
@@ -126,6 +143,22 @@ const todoSlice=createSlice({
         .addCase(deleteTodoThunk.rejected,(state,action)=>{
             state.error=action.error;
             state.loading=false;
+        })
+        .addCase(updateTodoThunk.pending,(state,_)=>{
+            state.error=null;
+            state.loading=true;
+        })
+        .addCase(updateTodoThunk.fulfilled,(state,action)=>{
+            state.error=null;
+            state.loading=false;
+            const index = state.todos.findIndex(todo=>todo._id===action.payload.id);
+            state.todos[index] = action.payload.updatedTodo;
+            state.selectedTodo = action.payload.id;
+        })
+        .addCase(updateTodoThunk.rejected,(state,action)=>{
+            state.error=action.error;
+            state.loading=false;
+            state.selectedTodo=state.selectedTodo;
         })
     }
 })
