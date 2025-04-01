@@ -157,7 +157,7 @@ class TodoService{
                 throw new Error("No Id mentioned to update the value.");
             }
 
-            const response = await this.httpClient.patch("/update-todo/",{Heading,Color,Completed},{params:{id}})
+            const response = await this.httpClient.patch(`/update-todo/${id}`,{Heading,Color,Completed})
 
             return response;
         } catch (error) {
