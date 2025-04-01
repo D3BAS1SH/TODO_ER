@@ -89,6 +89,11 @@ export const deleteTodoThunk = createAsyncThunk(
 const todoSlice=createSlice({
     name:"Todos",
     initialState,
+    reducers:{
+        selectTodo: (state, action) => {
+            state.selectedTodo = action.payload;
+        }
+    },
     extraReducers:(builder)=>{
         builder
         .addCase(REHYDRATE, (state, action) => {
@@ -163,4 +168,5 @@ const todoSlice=createSlice({
     }
 })
 
+export const {selectTodo} = todoSlice.actions;
 export default todoSlice.reducer;
