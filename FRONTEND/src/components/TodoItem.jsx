@@ -11,17 +11,18 @@ import {
 } from '@heroui/react';
 import { Trash2, FilePenLine } from 'lucide-react';
 import React, { useState } from 'react'
-import { useTodo, useTodoAllTodo } from '../hooks/useTodo.hook';
+import { useTodo, useTodoAllTodo, useTodoSelectedTodo } from '../hooks/useTodo.hook';
 import { useToast } from '../contexts/ToastContext';
 
 const TodoItem = () => {
     
-    const {onClose,onOpen,isOpen} = useDisclosure();
-    const [itemState,setItemState] = useState({ Heading:"", Color:"", Completed:"" });
-    const [toEdit,setToEdit] = useState(null);
+    const { onClose, onOpen, isOpen } = useDisclosure();
+    const [ itemState, setItemState ] = useState({ Heading:"", Color:"", Completed:"" });
+    const [ toEdit, setToEdit ] = useState(null);
 
-    const {deleteTodoDispatcher,updateTodoDispatcher} = useTodo();
-    const {todos} = useTodoAllTodo();
+    const { deleteTodoDispatcher, updateTodoDispatcher, selectTodoDispatcher } = useTodo();
+    const { todos } = useTodoAllTodo();
+    const { selectedTodo } = useTodoSelectedTodo();
     const { showToast } = useToast();
 
     const handleDeleteHit = async(id) => {
@@ -70,18 +71,38 @@ const TodoItem = () => {
         console.log(itemState);
     }
 
+    const handleSelectTodo = (id) => {
+        selectTodoDispatcher(id);
+    }
+
     return (
         <div>
             {
                 todos.map(itemName=>{
                     return (
-                    <div className='flex flex-row justify-between items-center mb-4' key={itemName._id}>
-                        <Checkbox key={itemName._id} value={itemName._id} isSelected={itemName.Completed}>
-                            <p style={{color:itemName.Color}} className='font-semibold'>
+                    <div
+                    className={`flex flex-row justify-between items-center mb-4 p-2 rounded z-50 cursor-pointer ${selectedTodo === itemName._id ? 'bg-gray-200' : ''}`}
+                    key={itemName._id}
+                    onClick={(e)=>{
+                        e.stopPropagation();
+                        console.log("Clicked the component main")
+                        handleSelectTodo(itemName._id)
+                    }}
+                    >
+                        <Checkbox 
+                        key={itemName._id} 
+                        value={itemName._id} 
+                        isSelected={itemName.Completed}
+                        >
+                            <p 
+                            style={{color:itemName.Color}} 
+                            className='font-semibold'
+                            
+                            >
                                 {itemName.Heading}
                             </p>
                         </Checkbox>
-                        <div className='flex flex-row z-50 '>
+                        <div className='flex flex-row z-10'>
 
                             <FilePenLine 
                             size={'20px'}
