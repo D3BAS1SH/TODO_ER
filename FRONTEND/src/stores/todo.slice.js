@@ -110,11 +110,10 @@ const todoSlice=createSlice({
             state.loading=true;
         })
         .addCase(createTodoThunk.fulfilled,(state,action)=>{
-            console.log(action.payload);
             state.error=null;
             state.loading=false;
             state.todos.push(action.payload.data);
-            state.selectedTodo=state.selectedTodo;
+            state.selectedTodo=action.payload.data._id;
         })
         .addCase(createTodoThunk.rejected,(state,action)=>{
             state.error=action.error.message;
