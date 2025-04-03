@@ -14,16 +14,17 @@ const subtodoSlice = createSlice(
         reducers:{
         },
         extraReducers:(builder)=>{
-            builder.addCase(getAllTodoThunk.pending,(state,_)=>{
+            builder
+            .addCase(getAllTodoThunk.pending,(state,_)=>{
                 state.error=null;
                 state.loading=true;
             })
-            builder.addCase(getAllTodoThunk.fulfilled,(state,action)=>{
+            .addCase(getAllTodoThunk.fulfilled,(state,action)=>{
                 state.error=null;
                 state.loading=false;
                 state.subtodos=action.payload.SubtodosOfIncomingTodos;
             })
-            builder.addCase(getAllTodoThunk.rejected,(state,action)=>{
+            .addCase(getAllTodoThunk.rejected,(state,action)=>{
                 state.error=action.error;
                 state.loading=false;
             })
