@@ -1,8 +1,9 @@
-import { useEffect } from "react"
 import Todos from "../components/Todos"
 import Subtodos from "../components/Subtodos"
 import TodoHeader from "../components/TodoHeader"
-import {useTodo} from "../hooks/useTodo.hook";
+import SubtodoHeader from "../components/SubtodoHeader";
+import { useEffect } from "react"
+import { useTodo } from "../hooks/useTodo.hook";
 import { ToastProvider } from "../contexts/ToastContext";
 import { Toaster } from "react-hot-toast";
 
@@ -23,8 +24,11 @@ const DashboardPage = () => {
             <Todos/>
           </div>
         </div>
-        <div className="col-span-10 overflow-hidden">
-          <Subtodos/>
+        <div className="col-span-10 h-full flex flex-col overflow-hidden">
+          <SubtodoHeader/>
+          <div className="flex-1 overflow-hidden">
+            <Subtodos/>
+          </div>
         </div>
       </div>
       <Toaster position="bottom-right" toastOptions={{
