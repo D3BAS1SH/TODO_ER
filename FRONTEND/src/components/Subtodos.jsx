@@ -11,7 +11,7 @@ const Subtodos = () => {
 
   return (
     <ScrollShadow className='w-full h-full overflow-y-auto p-6'>
-      <SubtodoItems SubTodoToRender={requiredSubTodo}/>
+      <SubtodoItems SubTodoToRender={requiredSubTodo} Parent={selectedTodo}/>
     </ScrollShadow>
   )
 }
