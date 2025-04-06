@@ -10,6 +10,10 @@ class SubTodoService {
             }
         });
 
+        this.publicEndpoints = ['/login', '/register'];
+        this.isRefreshing = false;
+        this.pendingRequests = [];
+
         this.setupInterceptors();
     }
 
@@ -88,7 +92,27 @@ class SubTodoService {
         );
     }
 
-    
+    async createSubTodo({todoid,subtodoObj}){
+        try {
+            if(!todoid){
+                throw new Error("How can we add the subtodo without Parent Todo?");
+            }
+            const {Content,Color,Completed} = subtodoObj;
+
+            const response = await this.httpClient.post(`add-subtodo/${todoid}`,{
+                Content,
+                Color,
+                Completed
+            })
+
+            console.log("Subtodo created successfully");
+
+            return response;
+        } catch (error) {
+            const HandledError = this.handleError(error);
+            throw HandledError;
+        }
+    }
 
     handleError(error){
         console.log(error);
@@ -104,3 +128,5 @@ class SubTodoService {
         return new Error('Request failed');
     }
 }
+
+export default new SubTodoService();
