@@ -304,11 +304,43 @@ const BatchUpdateSubtodos = asynHandler(async(req,res)=>{
     }
 })
 
+const ToggleCompletion = asynHandler(async(req,res)=>{
+    const {subtodoid} = req.params;
+    const userId = req.user?._id;
+
+    if(!userId){
+        throw new ApiError(401,"Unauthorized Request or invalid user");
+    }
+
+    if(!subtodoid || !mongoose.Types.ObjectId.isValid(subtodoid)){
+        throw new ApiError(409,"Invalid Id provided")
+    }
+
+    const targetSubtodo = await SubTodo.findOne({_id:subtodoid,User:userId});
+
+    if(!targetSubtodo){
+        throw new ApiError(409,"No document exists.")
+    }
+
+    const toggledSubtdo = await SubTodo.findOneAndUpdate(
+        {_id:subtodoid,User:userId},
+        {$set:{Completed:!targetSubtodo.Completed}},
+        {new:true}
+    );
+
+    if(!toggledSubtdo){
+        throw new ApiError(409,"Failure in updating values");
+    }
+
+    return res.status(200).json(new ApiResponse(200,{toggledSubtdo},"Successfully toggle completion"));
+})
+
 export {
     BatchAddSubtodos,
     AddSubTodo,
     UpdateSubTodo,
     DeleteSubtodo,
     CleanUpOrphanSubTodos,
-    BatchUpdateSubtodos
+    BatchUpdateSubtodos,
+    ToggleCompletion
 }
