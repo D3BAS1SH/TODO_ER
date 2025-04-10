@@ -8,9 +8,9 @@ import { useToast } from '../contexts/ToastContext.jsx'
 
 const SubtodoItems = ({SubTodoToRender,Parent}) => {
 
-    console.log("########Component##########");
-    console.log(SubTodoToRender,",",Parent);
-    console.log("############END############");
+    // console.log("########Component##########");
+    // console.log(SubTodoToRender,",",Parent);
+    // console.log("############END############");
 
     const {isOpen,onClose,onOpen} = useDisclosure();
     const { createSubTodoDispatcher } = useSubTodo();
@@ -76,7 +76,15 @@ const SubtodoItems = ({SubTodoToRender,Parent}) => {
                 {
                     (!!incomingSubtodos.length)?
                     incomingSubtodos.map(item=>{
-                        return <SubTodoSingleItem key={item.id} Color={item.Color} Content={item.Content} Completion={item.completion}/>
+
+                        return <SubTodoSingleItem
+                        key={item._id}
+                        id={item._id}
+                        Color={item.Color}
+                        Content={item.Content}
+                        Completion={item.completion}
+                        parent={item.Parent}
+                        />
                     })
                     :
                     <NoSubTodo/>
