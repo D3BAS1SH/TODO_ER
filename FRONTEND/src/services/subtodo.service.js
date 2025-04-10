@@ -114,6 +114,20 @@ class SubTodoService {
         }
     }
 
+    async deleteSubTodo({subTodoId}){
+        try {
+            if(!subTodoId){
+                throw new Error("No subtodo Id provided -Service");
+            }
+            await this.httpClient.delete(`delete-subtodo/${subTodoId}`);
+            console.log("Deleted Subtodo");
+        } catch (error) {
+            console.error(error?.message||"Something went wrong in deleting the subtodo");
+            const HandledError = this.handleError(error);
+            throw HandledError;
+        }
+    }
+
     handleError(error){
         console.log(error);
         if (error.response) {
