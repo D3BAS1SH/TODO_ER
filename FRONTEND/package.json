@@ -22,7 +22,6 @@
       "@mui/material": "^6.1.5",
       "@nextui-org/react": "^2.6.11",
       "@reduxjs/toolkit": "^2.3.0",
-      "@welldone-software/why-did-you-render": "^8.0.3",
       "axios": "^1.7.7",
       "framer-motion": "^12.5.0",
       "frontend": "file:",
