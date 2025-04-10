@@ -26,6 +26,24 @@ export const createSubTodoThunk = createAsyncThunk(
     }
 )
 
+export const deleteSubTodoThunk = createAsyncThunk(
+    "subtodo/deleteSubTodo",
+    async(subTodoDoc,{rejectWithValue})=>{
+        try {
+            const {subTodoId,parentId} = subTodoDoc;
+            if(!subTodoId){
+                return rejectWithValue("No subtodo object id provided -Thunk");
+            }
+            await subtodoService.deleteSubTodo({subTodoId:subTodoId});
+
+            return {parent:parentId,subTodoId};
+        } catch (error) {
+            console.log("Subtodo Deletion failed");
+            return rejectWithValue(error?.message||"Subtodo Deletion failed");
+        }
+    }
+)
+
 const subtodoSlice = createSlice(
     {
         name:"Subtodo",
@@ -65,6 +83,28 @@ const subtodoSlice = createSlice(
                 console.log("Where is _id?");
             })
             .addCase(createSubTodoThunk.rejected,(state,action)=>{
+                state.error=action.payload;
+                state.loading=false;
+            })
+            .addCase(deleteSubTodoThunk.pending,(state,_)=>{
+                state.error=null;
+                state.loading=true;
+            })
+            .addCase(deleteSubTodoThunk.fulfilled,(state,action)=>{
+                state.error=null;
+                state.loading=false;
+                const { parent, subTodoId } = action.payload;
+                state.subtodos=state.subtodos.map(item=>{
+                    if(item._id === parent){
+                        return {
+                            ...item,
+                            subtodos:item.subtodos.filter(sub=>sub._id!==subTodoId)
+                        }
+                    }
+                    return item
+                })
+            })
+            .addCase(deleteSubTodoThunk.rejected,(state,action)=>{
                 state.error=action.payload;
                 state.loading=false;
             })

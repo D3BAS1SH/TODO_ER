@@ -1,6 +1,8 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import { REHYDRATE } from "redux-persist"
 import todoService from '../services/todo.service.js';
+import { deleteSubTodoThunk } from "./subtodo.slice.js";
+
 const initialState={
     todos:[],
     loading:false,
@@ -163,6 +165,27 @@ const todoSlice=createSlice({
             state.error=action.error;
             state.loading=false;
             state.selectedTodo=state.selectedTodo;
+        })
+        .addCase(deleteSubTodoThunk.pending,(state,_)=>{
+            state.loading=true;
+            state.error=null;
+        })
+        .addCase(deleteSubTodoThunk.fulfilled,(state,action)=>{
+            state.loading=false;
+            state.error=null;
+            state.selectedTodo=state.selectedTodo;
+
+            const { parent, subTodoId } = action.payload;
+            const targetTodo = state.todos.find(todo=>todo._id===parent)
+
+            if(targetTodo){
+                targetTodo.Subtodos = targetTodo.Subtodos.filter(sub => sub._id !== subTodoId);
+            }
+            state.todos = state.todos;
+        })
+        .addCase(deleteSubTodoThunk.rejected,(state,action)=>{
+            state.error = action.payload;
+            state.loading = false;
         })
     }
 })
