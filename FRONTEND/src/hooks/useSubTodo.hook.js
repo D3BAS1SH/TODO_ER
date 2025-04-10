@@ -1,17 +1,20 @@
 import { useSelector,useDispatch } from "react-redux";
 import {
     createSubTodoThunk,
-    deleteSubTodoThunk
+    deleteSubTodoThunk,
+    toggleSubTodoThunk
 } from "../stores/subtodo.slice.js";
 
 export const useSubTodo = () => {
     const dispatch = useDispatch();
     const createSubTodoDispatcher = (subTodoDoc) => dispatch(createSubTodoThunk(subTodoDoc));
     const deleteSubTodoDispatcher = (subTodoDoc) => dispatch(deleteSubTodoThunk(subTodoDoc));
+    const toggleSubTodoDispatcher = (subTodoId) => dispatch(toggleSubTodoThunk(subTodoId));
 
     return {
         createSubTodoDispatcher,
-        deleteSubTodoDispatcher
+        deleteSubTodoDispatcher,
+        toggleSubTodoDispatcher
     }
 }
 

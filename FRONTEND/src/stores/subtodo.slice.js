@@ -26,6 +26,22 @@ export const createSubTodoThunk = createAsyncThunk(
     }
 )
 
+export const toggleSubTodoThunk = createAsyncThunk(
+    "subtodo/togglecompletion",
+    async(subtodoid,{rejectWithValue})=>{
+        try {
+            if(!subtodoid){
+                return rejectWithValue("No subtodo id provided -Thunk");
+            }
+            const response = await subtodoService.toggleSubtodoCompletion(subtodoid);
+            
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error?.message||"Failed in toggle completion.")
+        }
+    }
+)
+
 export const deleteSubTodoThunk = createAsyncThunk(
     "subtodo/deleteSubTodo",
     async(subTodoDoc,{rejectWithValue})=>{
@@ -105,6 +121,34 @@ const subtodoSlice = createSlice(
                 })
             })
             .addCase(deleteSubTodoThunk.rejected,(state,action)=>{
+                state.error=action.payload;
+                state.loading=false;
+            })
+            .addCase(toggleSubTodoThunk.pending,(state,_)=>{
+                state.error=null;
+                state.loading=true;
+            })
+            .addCase(toggleSubTodoThunk.fulfilled,(state,action)=>{
+                state.error=null;
+                state.loading=false;
+                console.log("action payload");
+                console.log(action.payload);
+                state.subtodos = state.subtodos.map(item=>{
+                    if(item._id===action.payload.data.toggledSubtdo.Parent){
+                        return {
+                            ...item,
+                            subtodos:item.subtodos.map(sub=>{
+                                if(sub._id===action.payload.data.toggledSubtdo._id){
+                                    return action.payload.data.toggledSubtdo
+                                }
+                                return sub
+                            })
+                        }
+                    }
+                    return item
+                })
+            })
+            .addCase(toggleSubTodoThunk.rejected,(state,action)=>{
                 state.error=action.payload;
                 state.loading=false;
             })

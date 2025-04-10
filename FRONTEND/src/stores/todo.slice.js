@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import { REHYDRATE } from "redux-persist"
 import todoService from '../services/todo.service.js';
-import { deleteSubTodoThunk } from "./subtodo.slice.js";
+import { deleteSubTodoThunk,toggleSubTodoThunk } from "./subtodo.slice.js";
 
 const initialState={
     todos:[],
@@ -187,6 +187,33 @@ const todoSlice=createSlice({
             state.error = action.payload;
             state.loading = false;
         })
+        .addCase(toggleSubTodoThunk.pending,(state,_)=>{
+            state.error=null;
+            state.loading=true;
+        })
+        .addCase(toggleSubTodoThunk.fulfilled,(state,action)=>{
+            state.error=null;
+            state.loading=false;
+            state.selectedTodo=state.selectedTodo;
+            state.todos=state.todos.map(item=>{
+                if(item._id===action.payload.data.toggledSubtdo.Parent){
+                    return {
+                        ...item,
+                        Subtodos:item.Subtodos.map(sub=>{
+                            if(sub._id===action.payload.data.toggledSubtdo._id){
+                                return {
+                                    ...sub,
+                                    Completed:action.payload.data.toggledSubtdo.Completed
+                                }
+                            }
+                            return sub
+                        })
+                    }
+                }
+                return item;
+            })
+        })
+        .addCase(toggleSubTodoThunk.rejected,(state,action)=>{})
     }
 })
 

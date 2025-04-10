@@ -128,6 +128,20 @@ class SubTodoService {
         }
     }
 
+    async toggleSubtodoCompletion(subtodoId){
+        try {
+            if(!subtodoId){
+                throw new Error("No Subtodo Id provided.");
+            }
+            const response = await this.httpClient.patch(`toggle-subtodo/${subtodoId}`);
+
+            return response;
+        } catch (error) {
+            const handledError = this.handleError(error);
+            throw handledError;
+        }
+    }
+
     handleError(error){
         console.log(error);
         if (error.response) {
