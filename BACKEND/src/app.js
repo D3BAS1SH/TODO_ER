@@ -6,7 +6,6 @@ import { errorHandler } from "./middlewares/errorhandler.middleware.js"
 
 const APP=express()
 
-
 APP.use(cors(corsConfig));
 console.log(corsConfig);
 APP.options("*",cors(corsConfig));
