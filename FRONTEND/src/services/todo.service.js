@@ -3,7 +3,7 @@ import axios from "axios";
 class TodoService{
     constructor(){
         this.httpClient = axios.create({
-            baseURL:"http://localhost:8088/api/v1/todos/",
+            baseURL: import.meta.env.VITE_SERVER_ORIGIN? import.meta.env.VITE_SERVER_ORIGIN+"/api/v1/todos/" : "http://localhost:8088/api/v1/todos/",
             withCredentials:true,
             headers:{
                 'Content-Type':"application/json"

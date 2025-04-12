@@ -3,7 +3,7 @@ import axios from "axios";
 class SubTodoService {
     constructor(){
         this.httpClient = axios.create({
-            baseURL:"http://localhost:8088/api/v1/subtodos/",
+            baseURL: import.meta.env.VITE_SERVER_ORIGIN? import.meta.env.VITE_SERVER_ORIGIN+"/api/v1/subtodos/" : "http://localhost:8088/api/v1/subtodos/",
             withCredentials:true,
             headers:{
                 'Content-Type':"application/json"

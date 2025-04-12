@@ -3,7 +3,7 @@ import axios from "axios";
 class UserAuthService{
     constructor(){
         this.httpClient=axios.create({
-            baseURL:"http://localhost:8088/api/v1/users/",
+            baseURL: import.meta.env.VITE_SERVER_ORIGIN? import.meta.env.VITE_SERVER_ORIGIN+"/api/v1/users/" : "http://localhost:8088/api/v1/users/",
             withCredentials:true,
             headers:{
                 "Content-Type":"application/json"
