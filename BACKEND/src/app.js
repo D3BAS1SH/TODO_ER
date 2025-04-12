@@ -6,9 +6,10 @@ import { errorHandler } from "./middlewares/errorhandler.middleware.js"
 
 const APP=express()
 
-APP.options("*",cors(corsConfig));
 
 APP.use(cors(corsConfig));
+console.log(corsConfig);
+APP.options("*",cors(corsConfig));
 
 APP.use(express.json({limit:"16kb"}))
 APP.use(express.urlencoded({extended:true,limit:"16kb"}))
