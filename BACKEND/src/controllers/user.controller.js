@@ -110,7 +110,7 @@ const loginUser = asynHandler(async(req,res)=>{
     const options = {
         httpOnly:true,
         secure:true,
-        sameSite:'strict'
+        sameSite:'None'
     }
 
     return res.status(200)
@@ -129,7 +129,7 @@ const logoutUser = asynHandler(async(req,res)=>{
     const options = {
         httpOnly:true,
         secure:true,
-        sameSite:'strict'
+        sameSite:'None'
     }
 
     return res.status(200)
@@ -164,7 +164,7 @@ const haverefreshAccessToken = asynHandler( async(req,res)=>{
         const options = {
             httpOnly:true,
             secure:true,
-            sameSite:'strict'
+            sameSite:'None'
         }
     
         const {AccessToken,RefreshToken} = await generateAccessNRefreshToken(user._id)
